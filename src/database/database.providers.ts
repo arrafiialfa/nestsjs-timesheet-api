@@ -3,6 +3,8 @@ import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 
 
+const configService = new ConfigService()
+
 export const databaseProviders = [
     {
         provide: 'DATA_SOURCE',
@@ -11,9 +13,9 @@ export const databaseProviders = [
                 type: 'mysql',
                 host: 'localhost',
                 port: 3306,
-                username: process.env.DB_USERNAME,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_DATABASE,
+                username: configService.get<string>('DB_USERNAME'),
+                password: configService.get<string>('DB_PASSWORD'),
+                database: configService.get<string>('DB_DATABASE'),
                 entities: [__dirname + '/../**/*.entity{.ts,.js}'],
                 synchronize: true,
             });
