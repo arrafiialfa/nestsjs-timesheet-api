@@ -1,5 +1,5 @@
 
-import { Controller, Post, HttpCode, HttpStatus, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, HttpCode, HttpStatus, Body, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorators/public.decorator';
@@ -9,7 +9,6 @@ export class FilesController {
     constructor(private readonly fileService: FilesService) { }
 
     @Public()
-    @HttpCode(HttpStatus.OK)
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file: Express.Multer.File) {
@@ -18,7 +17,6 @@ export class FilesController {
 
         return { message: 'Files uploaded successfully', savedFilePath }
     }
-
 
 
 }

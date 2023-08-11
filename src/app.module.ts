@@ -7,7 +7,6 @@ import { FilesModule } from './files/files.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 
-
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule, UsersModule, FilesModule],
   controllers: [AppController],
