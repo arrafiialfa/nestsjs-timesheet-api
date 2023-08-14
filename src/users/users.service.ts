@@ -10,18 +10,6 @@ export class UsersService {
         private userRepository: Repository<User>,
     ) { }
 
-    private readonly users = [
-        {
-            userId: 1,
-            username: 'test',
-            password: '123123',
-        },
-        {
-            userId: 2,
-            username: 'maria',
-            password: 'guess',
-        },
-    ];
 
     async findOne(username: string): Promise<User> {
         return this.userRepository.findOne({
