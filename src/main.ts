@@ -19,6 +19,6 @@ async function bootstrap() {
   app.use('/uploads', express.static('uploads'));
   app.use(multer({ storage }).any())
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();
