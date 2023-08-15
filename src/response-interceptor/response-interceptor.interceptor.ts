@@ -21,7 +21,7 @@ export class ResponseInterceptor implements NestInterceptor {
         }
 
         return {
-          data,
+          data: [data],
           messages: messages,
           statusCode: statusCode,
         }
