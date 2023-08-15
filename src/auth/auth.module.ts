@@ -10,8 +10,8 @@ import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
-    BcryptModule,
     UsersModule,
+    BcryptModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,

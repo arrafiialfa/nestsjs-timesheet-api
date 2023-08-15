@@ -1,16 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signIn.dto';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { BcryptModule } from 'src/bcrypt/bcrypt.module';
+import { UsersModule } from 'src/users/users.module';
 
 describe('AuthService', () => {
   let service: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [BcryptModule],
+      imports: [BcryptModule, JwtModule, UsersModule],
       providers: [AuthService],
     }).compile();
 
