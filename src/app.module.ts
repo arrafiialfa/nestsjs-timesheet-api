@@ -6,9 +6,10 @@ import { UsersModule } from './users/users.module';
 import { FilesModule } from './files/files.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { BcryptModule } from './bcrypt/bcrypt.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule, UsersModule, FilesModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule, UsersModule, FilesModule, BcryptModule],
   controllers: [AppController],
   providers: [AppService],
 })

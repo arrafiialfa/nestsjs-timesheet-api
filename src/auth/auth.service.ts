@@ -1,13 +1,14 @@
 import { Logger, Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
+import { BcryptService } from 'src/bcrypt/bcrypt.service';
 import { JwtService } from '@nestjs/jwt'
-import { checkPassword } from 'src/lib/bcrypt';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private bcrypt: BcryptService
     ) { }
 
     private readonly logger = new Logger(AuthService.name)
@@ -23,7 +24,7 @@ export class AuthService {
         }
 
         //if password provided doesnt match
-        if (!checkPassword(pass, user.password)) {
+        if (!this.bcrypt.checkPassword(pass, user.password)) {
             this.logger.error(`Username: ${username} made an invalid login attempt`)
             throw new UnauthorizedException();
         }
