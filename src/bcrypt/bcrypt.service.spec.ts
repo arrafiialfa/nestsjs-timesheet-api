@@ -15,4 +15,10 @@ describe('BcryptService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should be correctly hashed', () => {
+    const string = '123123';
+    const generatedHash = service.generatePassword(string);
+    expect(service.checkPassword(string, generatedHash)).toBe(true)
+  })
 });
