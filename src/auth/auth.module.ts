@@ -6,11 +6,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
-import * as bcrypt from 'bcryptjs';
 
 @Module({
   imports: [
-    bcrypt,
     UsersModule,
     JwtModule.register({
       global: true,
