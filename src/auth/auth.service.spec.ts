@@ -57,7 +57,7 @@ describe('AuthService', () => {
         username: '',
         password: '123123'
       }
-      await expect(authService.signIn(newUser.username, newUser.password)).rejects.toBeInstanceOf(NotFoundException)
+      await expect(authService.signIn(newUser.username, newUser.password)).rejects.toThrow(NotFoundException)
     })
 
     it('wrong password should return unauthorized exception', async () => {
@@ -65,7 +65,7 @@ describe('AuthService', () => {
         username: 'test3',
         password: '1111111'
       };
-      await expect(authService.signIn(newUser.username, newUser.password)).rejects.toBeInstanceOf(UnauthorizedException)
+      await expect(authService.signIn(newUser.username, newUser.password)).rejects.toThrow(UnauthorizedException)
     })
   });
 
