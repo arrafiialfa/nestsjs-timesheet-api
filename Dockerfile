@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the port your app will run on (assuming NestJS default is 3000)
-EXPOSE 3000
+EXPOSE 3001
 
 # Command to start your app
 CMD ["npm", "run", "start"]

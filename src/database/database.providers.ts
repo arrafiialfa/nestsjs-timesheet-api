@@ -11,7 +11,7 @@ export const databaseProviders = [
         useFactory: async () => {
             const dataSource = new DataSource({
                 type: 'mysql',
-                host: 'localhost',
+                host: 'nestapi',
                 port: 3306,
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),

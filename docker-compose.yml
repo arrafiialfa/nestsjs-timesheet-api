@@ -1,0 +1,28 @@
+version: '3'
+services:
+  nest-api:
+    build:
+      context: ./  # Specify the path to your app's directory
+      dockerfile: Dockerfile  # Optional if your Dockerfile is named Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      - MYSQL_HOST=mysql-container
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    networks:
+      - nestapi
+
+  mysql-container:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    networks:
+      - nestapi
+
+  
+
+networks:
+  nestapi:
