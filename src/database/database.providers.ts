@@ -11,11 +11,11 @@ export const databaseProviders = [
         useFactory: async () => {
             const dataSource = new DataSource({
                 type: 'mysql',
-                host: 'nestapi',
+                host: 'host.docker.internal',
                 port: 3306,
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),
-                database: configService.get<string>('DB_DATABASE'),
+                database: configService.get<string>('DB_NAME'),
                 entities: [__dirname + '/../**/*.entity{.ts,.js}'],
                 synchronize: true,
             });
