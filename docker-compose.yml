@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  nestapi:
+  loki:
 
 services:
   nest-api:
@@ -10,11 +10,58 @@ services:
       dockerfile: Dockerfile  # Optional if your Dockerfile is named Dockerfile
     image: nest-api
     restart : unless-stopped
+    volumes:
+      - ./production_logs:/logs
     ports:
       - '3001:3001'
     env_file:
       - .env
     networks:
-      - nestapi
+      - loki
 
+  loki:
+    image: grafana/loki:2.8.3
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.8.3
+    volumes:
+      - ./production_logs:/var/log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - loki
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy 
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - loki
 

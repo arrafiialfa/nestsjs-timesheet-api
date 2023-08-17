@@ -1,0 +1,9 @@
+# promtail-config/config.yml
+scrape_configs:
+  - job_name: nest-api_logs
+    static_configs:
+      - targets:
+          - loki:3001  # Replace with the correct target address and port
+    pipeline_stages:
+      - labels:
+          service: nest-api  # Optional: Add labels to identify logs from nest-api
