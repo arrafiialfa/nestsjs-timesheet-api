@@ -1,9 +1,15 @@
 version: '3'
+
+networks:
+  nestapi:
+
 services:
   nest-api:
     build:
       context: ./  # Specify the path to your app's directory
       dockerfile: Dockerfile  # Optional if your Dockerfile is named Dockerfile
+    image: nest-api
+    restart : unless-stopped
     ports:
       - '3001:3001'
     environment:
@@ -14,15 +20,4 @@ services:
     networks:
       - nestapi
 
-  mysql-container:
-    image: mysql:latest
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-    networks:
-      - nestapi
 
-  
-
-networks:
-  nestapi:
