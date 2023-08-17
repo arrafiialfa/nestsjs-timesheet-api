@@ -12,10 +12,8 @@ services:
     restart : unless-stopped
     ports:
       - '3001:3001'
-    environment:
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+    env_file:
+      - .env
     networks:
       - nestapi
 
