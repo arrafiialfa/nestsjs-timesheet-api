@@ -10,9 +10,9 @@ export const databaseProviders = [
         provide: 'DATA_SOURCE',
         useFactory: async () => {
             const dataSource = new DataSource({
-                type: 'mysql',
-                host: 'host.docker.internal',
-                port: 3306,
+                type: 'postgres',
+                host: configService.get<string>('DB_HOSTNAME'),
+                port: configService.get<number>('DB_PORT'),
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),
                 database: configService.get<string>('DB_NAME'),
