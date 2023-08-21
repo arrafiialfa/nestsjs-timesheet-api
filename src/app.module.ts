@@ -9,9 +9,16 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { BcryptModule } from './bcrypt/bcrypt.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response-interceptor/response-interceptor.interceptor';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule, UsersModule, FilesModule, BcryptModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10
+    }),
+    AuthModule, UsersModule, FilesModule, BcryptModule],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_INTERCEPTOR,
