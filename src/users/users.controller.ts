@@ -20,7 +20,7 @@ export class UsersController {
                     error: error,
                     messages: error.message
                 },
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.CONFLICT,
             )
         }
     }

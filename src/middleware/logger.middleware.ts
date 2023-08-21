@@ -7,12 +7,12 @@ export class LoggerMiddleware implements NestMiddleware {
     use(req: Request, res: Response, next: NextFunction) {
         res.on('finish', () => {
             const statusCode = res.statusCode;
-            if (statusCode === 401 || statusCode === 404 || statusCode === 405 || statusCode === 403 || statusCode === 500) {
-                this.logger.warn(`[${req.method}] ${req.url} - ${statusCode} ${req.statusMessage} ${res.statusMessage}`);
+            if (statusCode == 200) {
+                this.logger.log(`[${req.method}] url:${req.url} - ${res.statusCode} - ${res.statusMessage}`);
             } else if (statusCode == 500) {
-                this.logger.error(`[${req.method}] ${req.url} - ${statusCode} ${req.statusMessage} ${res.statusMessage}`);
+                this.logger.error(`[${req.method}] url:${req.url} - ${statusCode} - ${res.statusMessage}`);
             } else {
-                this.logger.log(`Logging HTTP request METHOD:${req.method} URL:${req.url} STATUS:${res.statusCode}`);
+                this.logger.warn(`[${req.method}] url:${req.url} - ${statusCode} -  ${res.statusMessage}`);
             }
         });
         next();
