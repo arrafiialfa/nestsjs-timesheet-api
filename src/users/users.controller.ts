@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Post, Body, HttpException } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Public } from 'src/decorators/public.decorator';
 import { NewUserDto } from './dto/newUser.dto';
@@ -12,14 +12,7 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     @Post('new-user')
     async saveToDB(@Body() newUserDto: NewUserDto) {
-        try {
-            return await this.userService.storeUser(newUserDto)
-        } catch (error) {
-            console.log(error.message)
-            throw new Error(
-                error.message,
-            )
-        }
+        return await this.userService.storeUser(newUserDto)
     }
 
 
