@@ -10,7 +10,8 @@ import { BcryptModule } from './bcrypt/bcrypt.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response-interceptor/response-interceptor.interceptor';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core/constants';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core/constants';
+import { ErrorFilter } from './exception-filter/error-exception';
 
 @Module({
   imports: [
@@ -21,10 +22,16 @@ import { APP_GUARD } from '@nestjs/core/constants';
     }),
     AuthModule, UsersModule, FilesModule, BcryptModule],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_INTERCEPTOR,
-    useClass: ResponseInterceptor,
-  },
+  providers: [AppService,
+    {
+      provide: APP_FILTER,
+      useClass: ErrorFilter
+    }
+    ,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard

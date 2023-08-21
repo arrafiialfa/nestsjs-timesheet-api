@@ -15,12 +15,9 @@ export class UsersController {
         try {
             return await this.userService.storeUser(newUserDto)
         } catch (error) {
-            throw new HttpException(
-                {
-                    error: error,
-                    messages: error.message
-                },
-                HttpStatus.CONFLICT,
+            console.log(error.message)
+            throw new Error(
+                error.message,
             )
         }
     }
