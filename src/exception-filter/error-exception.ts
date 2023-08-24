@@ -14,7 +14,7 @@ export class ErrorFilter implements ExceptionFilter {
         const message = error.message || 'Internal Server Error';
 
         this.logger.error(`[${request.method}] url:${request.url} - ${statusCode} - ${message}`);
-
+        console.error(error)
         response.status(statusCode).json({
             statusCode,
             message,
