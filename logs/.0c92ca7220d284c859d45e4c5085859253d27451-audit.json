@@ -29,6 +29,11 @@
             "date": 1692589938700,
             "name": "logs\\2023-08-21-combined.log",
             "hash": "66d57ab2f10cfdeba18a17feb1367caadfe5b16fa47bb3823ef76ce247ae12e2"
+        },
+        {
+            "date": 1692850246861,
+            "name": "logs\\2023-08-24-combined.log",
+            "hash": "4baa973b5a67be5793e340e00700d8b66a06d66226c656caaff495b9880ab2c9"
         }
     ],
     "hashType": "sha256"
