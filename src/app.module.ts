@@ -12,6 +12,8 @@ import { ResponseInterceptor } from './response-interceptor/response-interceptor
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core/constants';
 import { ErrorFilter } from './exception-filter/error-exception';
+import { RateLimiterModule } from './rate-limiter/rate-limiter.module';
+
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { ErrorFilter } from './exception-filter/error-exception';
       ttl: 60,
       limit: 10
     }),
-    AuthModule, UsersModule, FilesModule, BcryptModule],
+    AuthModule, UsersModule, FilesModule, BcryptModule, RateLimiterModule],
   controllers: [AppController],
   providers: [AppService,
     {
@@ -35,7 +37,7 @@ import { ErrorFilter } from './exception-filter/error-exception';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    },
   ],
 })
 export class AppModule implements NestModule {
