@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { BcryptModule } from 'src/bcrypt/bcrypt.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { JWT_SECRET } from 'src/constants';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 
@@ -14,7 +14,7 @@ import { AuthGuard } from './auth.guard';
     BcryptModule,
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: JWT_SECRET,
       signOptions: { expiresIn: '1200s' },
     }),
   ],
