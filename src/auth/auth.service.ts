@@ -1,8 +1,9 @@
-import { Logger, Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Logger, Injectable, UnauthorizedException, NotFoundException, HttpException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { BcryptService } from 'src/bcrypt/bcrypt.service';
 import { JwtService } from '@nestjs/jwt'
 import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { HttpStatus } from '@nestjs/common/enums';
 
 @Injectable()
 export class AuthService {
@@ -26,10 +27,18 @@ export class AuthService {
 
         const user = await this.usersService.findOne(username);
         const username_ip = `${username}:${userip}`;
+        const rlUsername = await this.limiterConsecutiveFailsByUsernameIP.get(username_ip);
+
+
+        if (rlUsername?.consumedPoints >= this.maxConsecutiveFailsByUsernameIP) {
+            const retrySecs = Math.round(rlUsername.msBeforeNext / 1000) || 1;
+            throw new HttpException(`Too Many Failed Attempts, retry after ${retrySecs} seconds`, HttpStatus.TOO_MANY_REQUESTS);
+        }
 
         //if no user with provided username is not found 
         if (!user) {
-            await this.limiterConsecutiveFailsByUsernameIP.consume(username_ip);
+            const rlRes = await this.limiterConsecutiveFailsByUsernameIP.consume(username_ip);
+            console.log(rlRes);
             this.logger.warn(`User with username ${username} does not exist in the DB`);
             throw new NotFoundException()
         }
@@ -51,5 +60,7 @@ export class AuthService {
         return {
             access_token: await this.jwtService.signAsync(payload)
         }
+
+
     }
 }
