@@ -1,17 +1,87 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Role } from './role.entity';
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 500 })
+    @Column()
+    comment: string;
+
+    @Column({ length: 191 })
     name: string;
 
-    @Column({ unique: true })
-    username: string;
+    @Column({ length: 191 })
+    email: string;
+
+    @Column({ length: 191 })
+    password: string;
+
+    @Column({ length: 191, nullable: true })
+    avatar: string | null;
+
+    @Column({ length: 191, nullable: true })
+    birth_place: string | null;
+
+    @Column({ type: 'date', nullable: true })
+    birth_date: Date | null;
+
+    @Column({ length: 191, nullable: true })
+    address: string | null;
+
+    @Column({ length: 191, nullable: true })
+    nip: string | null;
+
+    @Column({ length: 191, nullable: true })
+    npwp: string | null;
+
+    @Column({ length: 191, nullable: true })
+    ktp: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    email_verified_at: Date | null;
+
+    @Column({ length: 191, nullable: true, comment: 'Hash from 6 Number' })
+    otp_verification: string | null;
+
+    @Column({ type: 'timestamp', nullable: true, comment: 'Until when OTP is valid.' })
+    otp_timeout: Date | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    user_verified_at: Date | null;
+
+    @Column({ length: 191, nullable: true })
+    user_verified_by: string | null;
 
     @Column()
-    password: string;
+    rememberToken: string;
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    password_changed_at: Date | null;
+
+    @ManyToOne(() => Role, { eager: true }) // Replace 'Role' with your actual Role entity
+    @JoinColumn({ name: 'role_id' })
+    role: Role;
+
+    @Column({ enum: ['M', 'F'], nullable: true })
+    gender: string | null;
+
+    @Column({ length: 191, nullable: true })
+    phone: string | null;
+
+    @Column({ length: 191, nullable: true })
+    digisign_status: string | null;
+
+    @Column({ length: 191, nullable: true })
+    foto_ktp: string | null;
 
 }
