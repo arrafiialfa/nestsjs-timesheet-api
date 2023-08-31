@@ -12,7 +12,7 @@ export class Project {
     @Column({ length: 191 })
     name: string;
 
-    @Column('double', { precision: 32, scale: 2 })
+    @Column('numeric', { precision: 32, scale: 2 })
     value: number;
 
     @ManyToOne(() => User, { nullable: true })
@@ -27,16 +27,16 @@ export class Project {
     @JoinColumn({ name: 'contractor_id' })
     contractor: User | null;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     start_date: Date;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     cut_off_date: Date | null;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     effective_date: Date | null;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     finish_date: Date;
 
     @Column({ nullable: true })

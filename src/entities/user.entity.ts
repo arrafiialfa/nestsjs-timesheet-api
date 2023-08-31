@@ -1,17 +1,18 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Role } from './role.entity';
+
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ nullable: true })
     comment: string;
 
     @Column({ length: 191 })
     name: string;
 
-    @Column({ length: 191 })
+    @Column({ length: 191, unique: true })
     email: string;
 
     @Column({ length: 191 })
@@ -24,7 +25,7 @@ export class User {
     birth_place: string | null;
 
     @Column({ type: 'date', nullable: true })
-    birth_date: Date | null;
+    birth_date: string | null;
 
     @Column({ length: 191, nullable: true })
     address: string | null;
@@ -65,9 +66,6 @@ export class User {
     @DeleteDateColumn()
     deleted_at: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
-    password_changed_at: Date | null;
-
     @ManyToOne(() => Role, { eager: true }) // Replace 'Role' with your actual Role entity
     @JoinColumn({ name: 'role_id' })
     role: Role;
@@ -83,5 +81,4 @@ export class User {
 
     @Column({ length: 191, nullable: true })
     foto_ktp: string | null;
-
 }
