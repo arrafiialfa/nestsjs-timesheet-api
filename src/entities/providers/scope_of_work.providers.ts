@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { ScopeOfWork } from '../scope_of_work.entity';
 
-export const userProviders = [
+export const scopeOfWorkProviders = [
     {
         provide: 'SCOPE_OF_WORK_REPOSITORY',
         useFactory: (dataSource: DataSource) => dataSource.getRepository(ScopeOfWork),

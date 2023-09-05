@@ -6,4 +6,4 @@ import { TimesheetController } from './timesheet.controller';
   controllers: [TimesheetController],
   providers: [TimesheetService]
 })
-export class TimesheetModule {}
+export class TimesheetModule { }
