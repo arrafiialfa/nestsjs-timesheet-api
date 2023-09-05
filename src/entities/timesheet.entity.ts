@@ -8,14 +8,14 @@ export class Timesheet {
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'user_id' })
-    user_id: User;
+    user: User;
 
     @ManyToOne(() => User, { nullable: true })
-    @JoinColumn({ name: 'site_inspector' })
+    @JoinColumn({ name: 'site_inspector_id' })
     site_inspector: User | null;
 
     @ManyToOne(() => User, { nullable: true })
-    @JoinColumn({ name: 'checker_2' })
+    @JoinColumn({ name: 'checker_2_id' })
     'checker_2': User | null;
 
     @Column({ length: 191, enum: ['accepted', 'rejected', 'waiting', 'revision'] })
