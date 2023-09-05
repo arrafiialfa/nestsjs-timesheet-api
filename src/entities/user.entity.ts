@@ -54,7 +54,7 @@ export class User {
     @Column({ length: 191, nullable: true })
     user_verified_by: string | null;
 
-    @Column()
+    @Column({ nullable: true })
     rememberToken: string;
 
     @CreateDateColumn()
