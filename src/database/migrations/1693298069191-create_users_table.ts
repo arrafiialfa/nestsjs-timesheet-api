@@ -39,7 +39,7 @@ export class CreateUsersTable1693298069191 implements MigrationInterface {
         await queryRunner.createForeignKey("users", new TableForeignKey({
             columnNames: ["role_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "role", // Replace with your actual Role table name
+            referencedTableName: "roles", // Replace with your actual Role table name
             onDelete: "CASCADE",
         }));
     }

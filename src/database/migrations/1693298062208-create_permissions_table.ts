@@ -14,8 +14,6 @@ export class CreatePermissionsTable1693298062208 implements MigrationInterface {
                 { name: "created_at", type: "timestamp", default: "CURRENT_TIMESTAMP" },
                 { name: "updated_at", type: "timestamp", default: "CURRENT_TIMESTAMP" },
                 { name: "deleted_at", type: "timestamp", isNullable: true },
-                { name: "_lft", type: "int", isNullable: true },
-                { name: "_rgt", type: "int", isNullable: true },
             ],
         }), true);
 

@@ -32,56 +32,56 @@ export class CreateProjectsTable1693298075135 implements MigrationInterface {
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["unit_owner_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["upp_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["contractor_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["document_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "documents", // Assuming your Document table is named "documents"
+            referencedTableName: "documents",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["pic_project_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["related_role_owner_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["related_role_upp_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
 
         await queryRunner.createForeignKey("projects", new TableForeignKey({
             columnNames: ["consultant_id"],
             referencedColumnNames: ["id"],
-            referencedTableName: "users", // Assuming your User table is named "users"
+            referencedTableName: "users",
             onDelete: "CASCADE",
         }));
     }
