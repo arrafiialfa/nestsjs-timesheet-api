@@ -1,27 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
+import { Repository } from 'typeorm';
+import { Timesheet } from 'src/entities/timesheet.entity';
 
 @Injectable()
 export class TimesheetService {
 
+  constructor(
+    @Inject('TIMESHEET_REPOSITORY')
+    private timesheetRepository: Repository<Timesheet>
+  ) { }
+
   create(createTimesheetDto: CreateTimesheetDto) {
-    return 'This action adds a new timesheet';
+
+    //check user id exists in db or not
+    //if provided, check:
+    //site_inspector_id
+    //checker_2_id
+    //if exist continue, else throw error
+
+    return this.timesheetRepository.create(createTimesheetDto);
   }
 
-  findAll() {
-    return `This action returns all timesheet`;
+  findAll(): Promise<Timesheet[]> {
+    return this.timesheetRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} timesheet`;
+  findOne(id: number): Promise<Timesheet> {
+    return this.timesheetRepository.findOneBy({ id: id });
   }
 
   update(id: number, updateTimesheetDto: UpdateTimesheetDto) {
-    return `This action updates a #${id} timesheet`;
+    return this.timesheetRepository.update(id, updateTimesheetDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} timesheet`;
+    return this.timesheetRepository.softDelete(id);
   }
 }
