@@ -28,11 +28,11 @@ export class Role {
     @DeleteDateColumn()
     deleted_at: Date;
 
-    @Column({ nullable: true })
-    _lft: number;
+    @Column({ nullable: true, name: '_lft' })
+    left: number;
 
-    @Column({ nullable: true })
-    _rgt: number;
+    @Column({ nullable: true, name: '_rgt' })
+    right: number;
 
     @ManyToMany(() => Permission)
     @JoinTable({

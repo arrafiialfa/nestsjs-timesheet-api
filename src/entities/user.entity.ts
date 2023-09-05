@@ -66,7 +66,7 @@ export class User {
     @DeleteDateColumn()
     deleted_at: Date;
 
-    @ManyToOne(() => Role, { eager: true }) // Replace 'Role' with your actual Role entity
+    @ManyToOne(() => Role, { eager: true })
     @JoinColumn({ name: 'role_id' })
     role: Role;
 
