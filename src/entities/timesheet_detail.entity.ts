@@ -8,29 +8,29 @@ export class TimesheetDetail {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Timesheet, { nullable: true })
+    @ManyToOne(() => Timesheet)
     @JoinColumn({ name: 'timesheet_id' })
-    timesheet: Timesheet | null;
+    timesheet: Timesheet;
 
-    @ManyToOne(() => ScopeOfWork, { nullable: true })
+    @ManyToOne(() => ScopeOfWork)
     @JoinColumn({ name: 'scope_of_work_id' })
-    scope_of_work: ScopeOfWork | null;
+    scope_of_work: ScopeOfWork;
 
-    @ManyToOne(() => Project, { nullable: true })
+    @ManyToOne(() => Project)
     @JoinColumn({ name: 'project_id' })
-    project: Project | null;
+    project: Project;
 
     @Column({ enum: ['sunshine', 'cloudy', 'partly cloudy', 'overcast', 'raining', 'snowing', 'foggy', 'thunder and lightning', 'windy'] })
     weather: string;
 
-    @Column({ nullable: true })
-    manpower_qty: number | null
-
     @Column()
-    description: string
+    manpower_qty: number
 
-    @Column({ comment: 'Max. 2 filepath. Implode with |' })
-    file_path: string
+    @Column({ length: 191, nullable: true })
+    description: string | null
+
+    @Column({ comment: 'Max. 2 filepath. Implode with |', nullable: true })
+    file_path: string | null
 
     @Column({ type: 'timestamp' })
     date: Date;

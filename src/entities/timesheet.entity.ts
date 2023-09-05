@@ -6,9 +6,9 @@ export class Timesheet {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, { nullable: true })
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'user_id' })
-    user_id: User | null;
+    user_id: User;
 
     @ManyToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'site_inspector' })
@@ -18,10 +18,10 @@ export class Timesheet {
     @JoinColumn({ name: 'checker_2' })
     'checker_2': User | null;
 
-    @Column({ length: 191 })
+    @Column({ length: 191, enum: ['accepted', 'rejected', 'waiting', 'revision'] })
     status: string;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamp' })
     period: Date;
 
     @CreateDateColumn()
