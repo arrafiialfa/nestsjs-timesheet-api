@@ -4,8 +4,8 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signIn.dto';
 import { JwtModule } from '@nestjs/jwt';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
-import { BcryptModule } from 'src/bcrypt/bcrypt.module';
-import { UsersService } from 'src/users/users.service';
+import { BcryptModule } from 'src/modules/bcrypt/bcrypt.module';
+import { UsersService } from 'src/modules/users/users.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -34,7 +34,7 @@ describe('AuthService', () => {
     const mockedResolvedUser = {
       id: 23,
       name: 'tstname',
-      username: 'test3',
+      email: 'test3@gmail.com',
       password: '$2a$10$KkWrvWRrItS7qO8to2uai./zZizI5Wblk2nXWDfERB7Bn2CJxtlpO' //this is 123123
     }
     userService.findOne.mockResolvedValue(mockedResolvedUser);
@@ -43,29 +43,29 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should return access token', async () => {
       const newUser: SignInDto = {
-        username: 'test3',
+        email: 'test3',
         password: '123123'
       };
 
-      await expect(authService.signIn(newUser.username, newUser.password)).resolves.toHaveProperty('access_token')
+      await expect(authService.signIn(newUser.email, newUser.password, 'ip')).resolves.toHaveProperty('access_token')
     });
 
     it('wrong username should return notfound exception', async () => {
       //mock when userService does not return a user object
       userService.findOne.mockResolvedValue(null);
       const newUser: SignInDto = {
-        username: '',
+        email: '',
         password: '123123'
       }
-      await expect(authService.signIn(newUser.username, newUser.password)).rejects.toThrow(NotFoundException)
+      await expect(authService.signIn(newUser.email, newUser.password, 'ip')).rejects.toThrow(NotFoundException)
     })
 
     it('wrong password should return unauthorized exception', async () => {
       const newUser: SignInDto = {
-        username: 'test3',
+        email: 'test3',
         password: '1111111'
       };
-      await expect(authService.signIn(newUser.username, newUser.password)).rejects.toThrow(UnauthorizedException)
+      await expect(authService.signIn(newUser.email, newUser.password, 'ip')).rejects.toThrow(UnauthorizedException)
     })
   });
 

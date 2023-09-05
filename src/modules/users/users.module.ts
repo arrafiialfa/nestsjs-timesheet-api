@@ -3,8 +3,8 @@ import { DatabaseModule } from 'src/database/database.module';
 import { userProviders } from 'src/entities/user.providers';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { BcryptModule } from 'src/bcrypt/bcrypt.module';
-import { RateLimiterModule } from 'src/rate-limiter/rate-limiter.module';
+import { BcryptModule } from 'src/modules/bcrypt/bcrypt.module';
+import { RateLimiterModule } from 'src/modules/rate-limiter/rate-limiter.module';
 
 @Module({
   imports: [BcryptModule, DatabaseModule, RateLimiterModule],

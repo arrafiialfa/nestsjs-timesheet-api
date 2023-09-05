@@ -3,8 +3,10 @@ import { Body, Controller, Get, Post, HttpCode, HttpStatus, Request, Ip, } from 
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signIn.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger/dist';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
@@ -15,20 +17,10 @@ export class AuthController {
         return this.authService.signIn(signInDto.email, signInDto.password, ip);
     }
 
+    @ApiBearerAuth()
     @Get('profile')
     getProfile(@Request() req) {
         return req.user;
-    }
-
-    @Get('private')
-    getPrivate() {
-        return "this is private"
-    }
-
-    @Public()
-    @Get('public')
-    getPublicTest() {
-        return "this is public test"
     }
 
 }

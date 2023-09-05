@@ -1,6 +1,6 @@
 import { Logger, Injectable, UnauthorizedException, NotFoundException, HttpException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
-import { BcryptService } from 'src/bcrypt/bcrypt.service';
+import { UsersService } from 'src/modules/users/users.service';
+import { BcryptService } from 'src/modules/bcrypt/bcrypt.service';
 import { JwtService } from '@nestjs/jwt'
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { HttpStatus } from '@nestjs/common/enums';

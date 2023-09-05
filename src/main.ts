@@ -6,6 +6,7 @@ import * as multer from 'multer';
 import { WinstonModule } from 'nest-winston';
 import { transports, format } from 'winston';
 import 'winston-daily-rotate-file';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -47,6 +48,15 @@ async function bootstrap() {
 
 
   });
+
+  //swagger module initalization
+  const config = new DocumentBuilder()
+    .setTitle('Timesheet API Documentation ')
+    .setDescription('API Documentation using swagger')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
