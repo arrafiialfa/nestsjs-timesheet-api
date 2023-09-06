@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
-
+import { Repository } from 'typeorm';
+import { TimesheetDetail } from 'src/entities/timesheet_detail.entity';
 @Injectable()
 export class TimesheetDetailService {
+
+  constructor(
+    @Inject('TIMESHEET_DETAIL_REPOSITORY')
+    private timesheetDetailRepository: Repository<TimesheetDetail>
+  ) { }
+
   create(createTimesheetDetailDto: CreateTimesheetDetailDto) {
-    return 'This action adds a new timesheetDetail';
+    return this.timesheetDetailRepository.create(createTimesheetDetailDto)
   }
 
   findAll() {
-    return `This action returns all timesheetDetail`;
+    return this.timesheetDetailRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} timesheetDetail`;
+    return this.timesheetDetailRepository.findOneBy({ id: id });
   }
 
   update(id: number, updateTimesheetDetailDto: UpdateTimesheetDetailDto) {
-    return `This action updates a #${id} timesheetDetail`;
+    return this.timesheetDetailRepository.update(id, updateTimesheetDetailDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} timesheetDetail`;
+    return this.timesheetDetailRepository.softDelete(id);
   }
 }
