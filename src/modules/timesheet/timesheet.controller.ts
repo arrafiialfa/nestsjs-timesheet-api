@@ -35,7 +35,7 @@ export class TimesheetController {
   }
 
   @Public()
-  @Delete(':id')
+  @Post('/delete/:id')
   remove(@Param('id') id: string) {
     return this.timesheetService.remove(+id);
   }
