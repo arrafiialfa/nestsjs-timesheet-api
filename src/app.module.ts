@@ -14,6 +14,7 @@ import { APP_GUARD, APP_FILTER } from '@nestjs/core/constants';
 import { ErrorFilter } from './exception-filter/error-exception';
 import { TimesheetModule } from './modules/timesheet/timesheet.module';
 import { TimesheetDetailModule } from './modules/timesheet-detail/timesheet-detail.module';
+import { ScopeOfWorkModule } from './modules/scope-of-work/scope-of-work.module';
 
 
 
@@ -24,7 +25,9 @@ import { TimesheetDetailModule } from './modules/timesheet-detail/timesheet-deta
       ttl: 60,
       limit: 10
     }),
-    AuthModule, UsersModule, FilesModule, BcryptModule, TimesheetModule, TimesheetDetailModule],
+    AuthModule, UsersModule, FilesModule, BcryptModule,
+    TimesheetModule, TimesheetDetailModule, ScopeOfWorkModule
+  ],
   controllers: [AppController],
   providers: [AppService,
     {
