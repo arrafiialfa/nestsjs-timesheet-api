@@ -13,7 +13,8 @@ export class ScopeOfWorkService {
   ) { }
 
   create(createScopeOfWorkDto: CreateScopeOfWorkDto) {
-    return this.scopeOfWorkRepository.create(createScopeOfWorkDto);
+    const newScopeOfWork = this.scopeOfWorkRepository.create(createScopeOfWorkDto);
+    return this.scopeOfWorkRepository.save(newScopeOfWork);
   }
 
   findAll() {

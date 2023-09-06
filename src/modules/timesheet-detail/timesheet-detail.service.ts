@@ -37,7 +37,8 @@ export class TimesheetDetailService {
       throw new Error(errMssg)
     }
 
-    return this.timesheetDetailRepository.create(createTimesheetDetailDto)
+    const newTimesheetDetail = this.timesheetDetailRepository.create(createTimesheetDetailDto)
+    return this.timesheetDetailRepository.save(newTimesheetDetail)
   }
 
   findAll() {

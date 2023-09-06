@@ -13,7 +13,8 @@ export class ProjectService {
   ) { }
 
   create(createProjectDto: CreateProjectDto) {
-    return this.projectRepository.create(createProjectDto);
+    const newProject = this.projectRepository.create(createProjectDto);
+    return this.projectRepository.save(newProject);
   }
 
   findAll() {

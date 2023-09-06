@@ -20,7 +20,8 @@ export class TimesheetService {
     //checker_2_id
     //if exist continue, else throw error
 
-    return this.timesheetRepository.create(createTimesheetDto);
+    const newTimesheet = this.timesheetRepository.create(createTimesheetDto);
+    return this.timesheetRepository.save(newTimesheet)
   }
 
   findAll(): Promise<Timesheet[]> {
