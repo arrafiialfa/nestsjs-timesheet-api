@@ -8,6 +8,6 @@ import { scopeOfWorkProviders } from 'src/entities/providers/scope_of_work.provi
   imports: [DatabaseModule],
   controllers: [ScopeOfWorkController],
   providers: [ScopeOfWorkService, ...scopeOfWorkProviders],
-  exports: [ScopeOfWorkService]
+  exports: [ScopeOfWorkService, ...scopeOfWorkProviders]
 })
 export class ScopeOfWorkModule { }

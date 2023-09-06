@@ -5,11 +5,13 @@ import { DatabaseModule } from 'src/database/database.module';
 import { timesheetDetailProviders } from 'src/entities/providers/timesheet_detail.providers';
 import { TimesheetService } from '../timesheet/timesheet.service';
 import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
+import { TimesheetModule } from '../timesheet/timesheet.module';
+import { ScopeOfWorkModule } from '../scope-of-work/scope-of-work.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule],
   controllers: [TimesheetDetailController],
-  providers: [TimesheetDetailService, TimesheetService, ScopeOfWorkService, ...timesheetDetailProviders],
+  providers: [TimesheetDetailService, TimesheetService, ScopeOfWorkService, ...timesheetDetailProviders,],
   exports: [TimesheetDetailService]
 })
 export class TimesheetDetailModule { }

@@ -8,6 +8,6 @@ import { DatabaseModule } from 'src/database/database.module';
   imports: [DatabaseModule],
   controllers: [TimesheetController],
   providers: [TimesheetService, ...timesheetProviders],
-  exports: [TimesheetService]
+  exports: [TimesheetService, ...timesheetProviders]
 })
 export class TimesheetModule { }
