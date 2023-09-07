@@ -27,14 +27,38 @@ export class TimesheetService {
     //checker_2_id
     //check if checker_2_id exists as user in db
 
-    let errMssg = null;
-    const user = await this.userService.findOneById(createTimesheetDto.user_id)
+    const {
+      user_id, site_inspector_id, checker_2_id
+    } = createTimesheetDto
+
+    const errMssg = [];
+    const user = await this.userService.findOneById(user_id)
     if (!user) {
-      errMssg = 'check user_id provided, user is not found in the database'
+      errMssg.push('check user_id provided, user is not found in the database.')
     }
-    if (errMssg) {
-      throw new Error(errMssg)
+
+    if (site_inspector_id) {
+      const site_inspector = await this.userService.getUserRole(site_inspector_id)
+      if (!site_inspector) {
+        errMssg.push('check site_inspector_id provided, site_inspector_id provided does not have a role or is not a user in the database')
+      }
+      if (site_inspector && site_inspector.name !== 'site_inspector') {
+        errMssg.push('site_inspector_id provided does not correspond to user with role=site_inspector.')
+      }
     }
+
+    if (checker_2_id) {
+      const checker_2 = await this.userService.findOneById(checker_2_id)
+      if (!checker_2) {
+        errMssg.push('check checker_2_id provided, checker_2 is not found in the database.')
+      }
+    }
+
+    if (errMssg.length > 0) {
+      throw new Error(`${errMssg.join(', ')}`);
+    }
+
+    return
 
     const newTimesheet = this.timesheetRepository.create({ user: user, ...createTimesheetDto });
     return this.timesheetRepository.save(newTimesheet)
