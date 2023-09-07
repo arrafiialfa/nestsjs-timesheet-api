@@ -30,4 +30,9 @@ export class UsersService {
         const newUser = this.userRepository.create({ ...user, password: this.bcrypt.generatePassword(user.password) });
         return this.userRepository.save(newUser);
     }
+
+    async getUserRole(id: number) {
+        const user = await this.userRepository.findOneBy({ id: id })
+        return user.role
+    }
 }

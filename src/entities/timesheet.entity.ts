@@ -22,7 +22,7 @@ export class Timesheet {
     status: string;
 
     @Column({ type: 'timestamp', unique: true, comment: 'period is date + year' })
-    period: Date;
+    period: string;
 
     @CreateDateColumn()
     created_at: Date;

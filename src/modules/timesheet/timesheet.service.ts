@@ -30,16 +30,13 @@ export class TimesheetService {
     let errMssg = null;
     const user = await this.userService.findOneById(createTimesheetDto.user_id)
     if (!user) {
-      errMssg += 'check user_id provided, user is not found in the database'
+      errMssg = 'check user_id provided, user is not found in the database'
     }
     if (errMssg) {
       throw new Error(errMssg)
     }
 
-
     const newTimesheet = this.timesheetRepository.create({ user: user, ...createTimesheetDto });
-    console.log('dto', createTimesheetDto, 'newtimesheet', newTimesheet)
-    return
     return this.timesheetRepository.save(newTimesheet)
   }
 
