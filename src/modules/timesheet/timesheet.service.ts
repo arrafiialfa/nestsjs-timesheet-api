@@ -3,24 +3,43 @@ import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
 import { Repository } from 'typeorm';
 import { Timesheet } from 'src/entities/timesheet.entity';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class TimesheetService {
 
   constructor(
     @Inject('TIMESHEET_REPOSITORY')
-    private timesheetRepository: Repository<Timesheet>
+    private timesheetRepository: Repository<Timesheet>,
+    private userService: UsersService
   ) { }
 
-  create(createTimesheetDto: CreateTimesheetDto) {
+  async create(createTimesheetDto: CreateTimesheetDto) {
 
     //check user id exists in db or not
-    //if provided, check:
-    //site_inspector_id
-    //checker_2_id
-    //if exist continue, else throw error
+    //else throw error
 
-    const newTimesheet = this.timesheetRepository.create(createTimesheetDto);
+    //site_inspector_id
+    //check if site_inspector_id exists as user in db 
+    //check if user IS site_inspector
+    //if not throw error
+
+    //checker_2_id
+    //check if checker_2_id exists as user in db
+
+    let errMssg = null;
+    const user = await this.userService.findOneById(createTimesheetDto.user_id)
+    if (!user) {
+      errMssg += 'check user_id provided, user is not found in the database'
+    }
+    if (errMssg) {
+      throw new Error(errMssg)
+    }
+
+
+    const newTimesheet = this.timesheetRepository.create({ user: user, ...createTimesheetDto });
+    console.log('dto', createTimesheetDto, 'newtimesheet', newTimesheet)
+    return
     return this.timesheetRepository.save(newTimesheet)
   }
 

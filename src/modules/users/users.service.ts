@@ -12,6 +12,9 @@ export class UsersService {
         private bcrypt: BcryptService
     ) { }
 
+    async findOneById(id: number): Promise<User> {
+        return this.userRepository.findOneBy({ id: id });
+    }
 
     async findOne(email: string): Promise<User> {
         return this.userRepository.findOne({
