@@ -22,7 +22,7 @@ export class ScopeOfWorkService {
   }
 
   findOne(id: number) {
-    return this.scopeOfWorkRepository.findBy({ id: id });
+    return this.scopeOfWorkRepository.findOneBy({ id: id });
   }
 
   update(id: number, updateScopeOfWorkDto: UpdateScopeOfWorkDto) {

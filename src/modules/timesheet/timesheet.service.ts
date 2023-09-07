@@ -17,15 +17,19 @@ export class TimesheetService {
   async create(createTimesheetDto: CreateTimesheetDto) {
 
     //check user id exists in db or not
-    //else throw error
+    //else add err message
 
+    //if provided : 
     //site_inspector_id
     //check if site_inspector_id exists as user in db 
     //check if user IS site_inspector
-    //if not throw error
-
+    //else add err message
     //checker_2_id
     //check if checker_2_id exists as user in db
+    //else add err message
+
+    //if err mssg is found
+    //throw new Error(errmessg)
 
     const {
       user_id, site_inspector_id, checker_2_id

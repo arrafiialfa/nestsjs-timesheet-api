@@ -1,15 +1,18 @@
-import { IsEnum, IsNotEmpty } from "class-validator";
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { Weather } from "src/enums";
 
 export class CreateTimesheetDetailDto {
 
     @IsNotEmpty()
+    @IsNumber()
     timesheet_id: number;
 
+    @IsNumber()
     @IsNotEmpty()
     scope_of_work_id: number;
 
     @IsNotEmpty()
+    @IsNumber()
     project_id: number;
 
     @IsEnum(Weather)
@@ -22,9 +25,13 @@ export class CreateTimesheetDetailDto {
     value: number;
 
     @IsNotEmpty()
-    date: string;
+    @IsDate()
+    date: Date;
 
+    @IsOptional()
     description: string | null;
+
+    @IsOptional()
     file_path: string | null;
 
 }

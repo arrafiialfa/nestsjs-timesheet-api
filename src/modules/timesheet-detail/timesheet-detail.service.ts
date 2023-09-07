@@ -19,25 +19,32 @@ export class TimesheetDetailService {
 
   async create(createTimesheetDetailDto: CreateTimesheetDetailDto) {
 
-    let errMssg = null;
+    const errMssg = [];
     const timesheet = await this.timesheetService.findOne(createTimesheetDetailDto.timesheet_id)
     const project = await this.projectService.findOne(createTimesheetDetailDto.project_id);
     const scopeOfWork = await this.scopeOfWorkService.findOne(createTimesheetDetailDto.scope_of_work_id)
     if (!timesheet) {
-      errMssg += 'Check your timesheet_id, Timesheet is not found in DB. '
+      errMssg.push('Check your timesheet_id, Timesheet is not found in DB. ')
     }
     if (!project) {
-      errMssg += 'Check your project_id, Project is not found in DB. '
+      errMssg.push('Check your project_id, Project is not found in DB. ')
     }
     if (!scopeOfWork) {
-      errMssg += 'Check your scope_of_work_id, Scope of Work is not found in DB. '
+      errMssg.push('Check your scope_of_work_id, Scope of Work is not found in DB. ')
     }
 
-    if (errMssg) {
-      throw new Error(errMssg)
+    if (errMssg.length > 0) {
+      throw new Error(errMssg.join(", "))
     }
 
-    const newTimesheetDetail = this.timesheetDetailRepository.create(createTimesheetDetailDto)
+    const newTimesheetDetail = this.timesheetDetailRepository.create(
+      {
+        timesheet: timesheet,
+        project: project,
+        scope_of_work: scopeOfWork,
+        ...createTimesheetDetailDto
+      }
+    )
     return this.timesheetDetailRepository.save(newTimesheetDetail)
   }
 
