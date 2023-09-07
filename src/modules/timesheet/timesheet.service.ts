@@ -58,8 +58,6 @@ export class TimesheetService {
       throw new Error(`${errMssg.join(', ')}`);
     }
 
-    return
-
     const newTimesheet = this.timesheetRepository.create({ user: user, ...createTimesheetDto });
     return this.timesheetRepository.save(newTimesheet)
   }
