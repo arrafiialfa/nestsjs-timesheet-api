@@ -13,11 +13,13 @@ export class ErrorFilter implements ExceptionFilter {
         const statusCode = 500; // Internal Server Error
         const message = error.message || 'Internal Server Error';
 
-        this.logger.error(`[${request.method}] url:${request.url} - ${statusCode} - ${message}`);
+        this.logger.error(`[${request.method}] url:${request.url} - ${statusCode} - ${message}, details: ${JSON.parse(JSON.stringify(error, null, 2)).response.message}`);
+
         console.error(error)
         response.status(statusCode).json({
             statusCode,
             message,
+            details: [error]
         });
     }
 }
