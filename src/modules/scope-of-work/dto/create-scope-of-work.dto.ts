@@ -1,11 +1,11 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateScopeOfWorkDto {
 
     @IsNotEmpty()
     name: string;
 
-    @IsNotEmpty()
-    description: string;
+    @IsOptional()
+    description: string | null;
 
 }
