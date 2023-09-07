@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { TimesheetService } from './timesheet.service';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
@@ -29,7 +29,7 @@ export class TimesheetController {
   }
 
   @Public()
-  @Patch(':id')
+  @Post('/update/:id')
   update(@Param('id') id: string, @Body() updateTimesheetDto: UpdateTimesheetDto) {
     return this.timesheetService.update(+id, updateTimesheetDto);
   }

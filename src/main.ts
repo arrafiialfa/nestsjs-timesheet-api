@@ -7,10 +7,10 @@ import { WinstonModule } from 'nest-winston';
 import { transports, format } from 'winston';
 import 'winston-daily-rotate-file';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from "@nestjs/common"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-
     logger: WinstonModule.createLogger({
       //error logs
       transports: [
@@ -45,8 +45,6 @@ async function bootstrap() {
         })
       ]
     })
-
-
   });
 
   //swagger module initalization
@@ -69,6 +67,7 @@ async function bootstrap() {
 
   app.use('/uploads', express.static('uploads'));
   app.use(multer({ storage }).any())
+  app.useGlobalPipes(new ValidationPipe())
 
   await app.listen(3001);
 }
