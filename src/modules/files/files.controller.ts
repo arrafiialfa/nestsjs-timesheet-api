@@ -1,5 +1,5 @@
 
-import { Controller, Post, HttpCode, HttpStatus, Body, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorators/public.decorator';
