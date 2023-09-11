@@ -12,6 +12,7 @@ services:
     restart : unless-stopped
     volumes:
       - ./production_logs:/logs
+      - ./uploads:/uploads
     ports:
       - '3001:3001'
     env_file:
