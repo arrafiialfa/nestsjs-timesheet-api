@@ -1,10 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from './user.entity'; // Import the User entity if you have one
+import { TimesheetDetail } from './timesheet_detail.entity';
 
 @Entity('timesheets')
 export class Timesheet {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @OneToMany(() => TimesheetDetail, timesheetDetail => timesheetDetail.timesheet)
+    timesheet_details: TimesheetDetail[]
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'user_id' })

@@ -70,8 +70,14 @@ export class TimesheetService {
     return this.timesheetRepository.find();
   }
 
-  findOne(id: number): Promise<Timesheet> {
-    return this.timesheetRepository.findOneBy({ id: id });
+  async findOne(id: number): Promise<Timesheet> {
+    const timesheet = await this.timesheetRepository
+      .createQueryBuilder('timesheet')
+      .leftJoinAndSelect('timesheet.timesheet_details', 'timesheet_details')
+      .where('timesheet.id = :id', { id })
+      .getOne();
+
+    return timesheet;
   }
 
   update(id: number, updateTimesheetDto: UpdateTimesheetDto) {
