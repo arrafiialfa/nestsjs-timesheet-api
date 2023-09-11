@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Response } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from './decorators/public.decorator';
 
@@ -10,5 +10,11 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Public()
+  @Get('/favicon.ico')
+  getFavicon(@Response() res) {
+    return res.status(204).json({ data: "No Content" })
   }
 }
