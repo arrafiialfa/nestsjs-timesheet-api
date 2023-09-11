@@ -1,9 +1,9 @@
 
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, UploadedFiles } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorators/public.decorator';
-import { ApiTags } from '@nestjs/swagger/dist/decorators';
+import { ApiTags, ApiBody, ApiConsumes } from '@nestjs/swagger/dist/decorators';
+import { FilesUploadDto } from './dto/files-upload.dto';
 
 @Controller('files')
 @ApiTags('File Upload')
@@ -12,12 +12,20 @@ export class FilesController {
 
     @Public()
     @Post('upload')
-    @UseInterceptors(FileInterceptor('file'))
-    async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        description: 'file upload',
+        type: FilesUploadDto,
+    })
+    async uploadFile(@UploadedFiles() files: Express.Multer.File[]) {
 
-        const savedFilePath = this.fileService.saveFile(file);
+        if (files.length > 0) {
+            const savedFilePath = await this.fileService.saveFiles(files);
 
-        return { message: 'Files uploaded successfully', savedFilePath }
+            return { message: 'Files uploaded successfully', savedFilePath }
+        }
+
+        throw new Error('A File(s) must be uploaded')
     }
 
 

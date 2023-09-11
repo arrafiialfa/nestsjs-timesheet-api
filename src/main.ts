@@ -9,6 +9,7 @@ import 'winston-daily-rotate-file';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from "@nestjs/common"
 
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
@@ -56,17 +57,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.originalname);
-    }
-  })
-
   app.use('/uploads', express.static('uploads'));
-  app.use(multer({ storage }).any())
+  app.use(multer().any())
   app.useGlobalPipes(new ValidationPipe())
 
   await app.listen(3001);

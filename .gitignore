@@ -400,3 +400,4 @@ dist
 .serverless/**/*.zip
 logs
 docker_images
+uploads
