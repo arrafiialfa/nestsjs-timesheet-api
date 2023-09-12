@@ -3,10 +3,6 @@ import { IsNotEmpty, IsOptional, IsNumber, IsString, Matches } from "class-valid
 
 export class CreateTimesheetDto {
 
-    @IsNotEmpty()
-    @IsNumber()
-    user_id: number;
-
     @IsOptional()
     @IsNumber()
     site_inspector_id: number | null;
