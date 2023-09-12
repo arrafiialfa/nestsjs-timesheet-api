@@ -3,11 +3,12 @@ import { HolidayService } from './holiday.service';
 import { CreateHolidayDto } from './dto/create-holiday.dto';
 import { UpdateHolidayDto } from './dto/update-holiday.dto';
 import { Public } from 'src/decorators/public.decorator';
-import { ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiConsumes, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CsvUploadDto } from './dto/upload-csv.dto';
 import { extname } from 'path';
 
 @Controller('holiday')
+@ApiTags('Holiday')
 @Public()
 export class HolidayController {
   constructor(private readonly holidayService: HolidayService) { }
