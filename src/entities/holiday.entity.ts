@@ -20,7 +20,7 @@ export class Holiday {
     @Column({ length: 191 })
     holiday: string
 
-    @Column({ length: 191 })
+    @Column({ length: 191, nullable: true })
     datetime_ms: string
 
     @CreateDateColumn()
