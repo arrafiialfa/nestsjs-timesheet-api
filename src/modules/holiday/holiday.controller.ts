@@ -33,7 +33,7 @@ export class HolidayController {
     if (file.length > 0) {
       const ext = extname(file[0].originalname)
       if (ext !== '.csv') {
-        throw new Error('Only .csv file are allowed')
+        throw new Error('Only .csv file is allowed')
       }
       return this.holidayService.createFromCsv(file[0]);
     }
