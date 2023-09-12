@@ -29,7 +29,10 @@ export class HolidayService {
       }
     )
 
-    return { data, errors }
+    const saved = await this.holidayRepository.save(data)
+
+    return { parsedData: data.length, parsingErrors: errors, savedToDB: saved.length, saved: saved }
+
   }
 
   findAll() {
