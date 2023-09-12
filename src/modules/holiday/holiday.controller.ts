@@ -5,6 +5,7 @@ import { UpdateHolidayDto } from './dto/update-holiday.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { CsvUploadDto } from './dto/upload-csv.dto';
+import { extname } from 'path';
 
 @Controller('holiday')
 @Public()
@@ -30,6 +31,10 @@ export class HolidayController {
     }
 
     if (file.length > 0) {
+      const ext = extname(file[0].originalname)
+      if (ext !== '.csv') {
+        throw new Error('Only .csv file are allowed')
+      }
       return this.holidayService.createFromCsv(file[0]);
     }
 
