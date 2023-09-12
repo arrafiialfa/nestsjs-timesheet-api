@@ -1,3 +1,5 @@
+import { IsEnum } from 'class-validator';
+import { Day, Month } from 'src/enums';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, } from 'typeorm';
 
 @Entity('holidays')
@@ -9,9 +11,11 @@ export class Holiday {
     date: number
 
     @Column({ length: 191 })
+    @IsEnum(Day)
     day: string
 
     @Column({ length: 191 })
+    @IsEnum(Month)
     month: string
 
     @Column()
