@@ -7,11 +7,13 @@ export class CreateTimesheetDetailDto {
     timesheet_id: number;
 
     @IsNumber()
+    @IsNotEmpty()
     scope_of_work_id: number;
 
     @IsNotEmpty()
     project_id: number;
 
+    @IsNotEmpty()
     @IsEnum(Weather)
     weather: string;
 

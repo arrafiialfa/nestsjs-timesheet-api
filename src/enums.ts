@@ -11,26 +11,26 @@ export enum Weather {
 }
 
 export enum Day {
-    Sunday = 'sunday',
-    Monday = 'monday',
-    Tuesday = 'tuesday',
-    Wednesday = 'wednesday',
-    Thursday = 'thursday',
-    Friday = 'friday',
-    Saturday = 'saturday'
+    Sunday = 'Sunday',
+    Monday = 'Monday',
+    Tuesday = 'Tuesday',
+    Wednesday = 'Wednesday',
+    Thursday = 'Thursday',
+    Friday = 'Friday',
+    Saturday = 'Saturday'
 }
 
 export enum Month {
-    January = 'january',
-    February = 'february',
-    March = 'march',
-    April = 'april',
-    May = 'may',
-    June = 'june',
-    July = ' july',
-    August = 'august',
-    September = 'september',
-    October = 'october',
-    November = 'november',
-    December = 'december'
+    January = 'January',
+    February = 'February',
+    March = 'March',
+    April = 'April',
+    May = 'May',
+    June = 'June',
+    July = ' July',
+    August = 'August',
+    September = 'September',
+    October = 'October',
+    November = 'November',
+    December = 'December'
 }
