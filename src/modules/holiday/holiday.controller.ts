@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, UploadedFiles } from '@nestjs/common';
 import { HolidayService } from './holiday.service';
 import { CreateHolidayDto } from './dto/create-holiday.dto';
 import { UpdateHolidayDto } from './dto/update-holiday.dto';
@@ -24,11 +24,13 @@ export class HolidayController {
     type: CsvUploadDto,
   })
   @HttpCode(HttpStatus.OK)
-  async createFromCSV(@UploadedFile() file: Express.Multer.File) {
-    if (file) {
-      const savedFilePath = this.holidayService.createFromCsv(file);
+  async createFromCSV(@UploadedFiles() file: Express.Multer.File[]) {
+    if (file.length > 1) {
+      throw new Error('Please upload only one CSV file')
+    }
 
-      return { message: 'Files uploaded successfully', savedFilePath }
+    if (file.length > 0) {
+      return this.holidayService.createFromCsv(file[0]);
     }
 
     throw new Error('A File(s) must be uploaded')

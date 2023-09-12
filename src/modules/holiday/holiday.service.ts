@@ -3,6 +3,7 @@ import { CreateHolidayDto } from './dto/create-holiday.dto';
 import { UpdateHolidayDto } from './dto/update-holiday.dto';
 import { Repository } from 'typeorm';
 import { Holiday } from 'src/entities/holiday.entity';
+import * as Papa from 'papaparse'
 
 
 @Injectable()
@@ -18,8 +19,17 @@ export class HolidayService {
     return this.holidayRepository.save(newHolday);
   }
 
-  createFromCsv(csv: Express.Multer.File) {
-    return csv
+  async createFromCsv(csv: Express.Multer.File) {
+    const { data, errors } = await Papa.parse(
+      csv.buffer.toString(),
+      {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true
+      }
+    )
+
+    return { data, errors }
   }
 
   findAll() {
