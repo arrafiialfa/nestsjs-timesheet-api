@@ -4,6 +4,7 @@ import { BcryptService } from 'src/modules/bcrypt/bcrypt.service';
 import { JwtService } from '@nestjs/jwt'
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { HttpStatus } from '@nestjs/common/enums';
+import { Request } from "express"
 
 @Injectable()
 export class AuthService {
@@ -62,5 +63,10 @@ export class AuthService {
         }
 
 
+    }
+
+    extractTokenFromHeader(request: Request): string | undefined {
+        const [type, token] = request.headers.authorization?.split(' ') ?? [];
+        return type === 'Bearer' ? token : undefined;
     }
 }

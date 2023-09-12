@@ -16,16 +16,19 @@ export class TimesheetService {
 
   async create(createTimesheetDto: CreateTimesheetDto) {
 
-    //check user id exists in db or not
+    //check currently authenticated user get its id
     //else add err message
 
-    //if provided : 
     //site_inspector_id
     //check if site_inspector_id exists as user in db 
     //check if user IS site_inspector
+
+    //rolerepository.findonebyid(roleinspectorid)->name = Site Inspector 
+
     //else add err message
     //checker_2_id
     //check if checker_2_id exists as user in db
+    //checker 2 name = Checker II
     //else add err message
 
     //if err mssg is found
@@ -41,22 +44,21 @@ export class TimesheetService {
       errMssg.push('check user_id provided, user is not found in the database.')
     }
 
-    if (site_inspector_id) {
-      const site_inspector = await this.userService.getUserRole(site_inspector_id)
-      if (!site_inspector) {
-        errMssg.push('check site_inspector_id provided, site_inspector_id provided does not have a role or is not a user in the database')
-      }
-      if (site_inspector && site_inspector.name !== 'site_inspector') {
-        errMssg.push('site_inspector_id provided does not correspond to user with role=site_inspector.')
-      }
+
+    const site_inspector = await this.userService.getUserRole(site_inspector_id)
+    if (!site_inspector) {
+      errMssg.push('check site_inspector_id provided, site_inspector_id provided does not have a role or is not a user in the database')
+    }
+    if (site_inspector && site_inspector.name !== 'site_inspector') {
+      errMssg.push('site_inspector_id provided does not correspond to user with role=site_inspector.')
     }
 
-    if (checker_2_id) {
-      const checker_2 = await this.userService.findOneById(checker_2_id)
-      if (!checker_2) {
-        errMssg.push('check checker_2_id provided, checker_2 is not found in the database.')
-      }
+
+    const checker_2 = await this.userService.findOneById(checker_2_id)
+    if (!checker_2) {
+      errMssg.push('check checker_2_id provided, checker_2 is not found in the database.')
     }
+
 
     if (errMssg.length > 0) {
       throw new Error(`${errMssg.join(', ')}`);
