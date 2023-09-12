@@ -1,4 +1,4 @@
-import { ManyToMany, JoinTable, Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Tree, TreeParent, TreeChildren } from 'typeorm';
+import { ManyToMany, JoinTable, Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Tree, TreeParent, TreeChildren, JoinColumn } from 'typeorm';
 import { Permission } from './permission.entity';
 
 @Entity('roles')
@@ -8,6 +8,7 @@ export class Role {
     id: number;
 
     @TreeParent()
+    @JoinColumn({ name: 'parent_id' })
     parent: Role;
 
     @TreeChildren()
