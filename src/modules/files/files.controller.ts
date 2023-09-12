@@ -1,5 +1,5 @@
 
-import { Controller, Post, UploadedFiles } from '@nestjs/common';
+import { Controller, Post, UploadedFiles, HttpCode, HttpStatus } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { Public } from 'src/decorators/public.decorator';
 import { ApiTags, ApiBody, ApiConsumes } from '@nestjs/swagger/dist/decorators';
@@ -17,6 +17,7 @@ export class FilesController {
         description: 'file upload',
         type: FilesUploadDto,
     })
+    @HttpCode(HttpStatus.OK)
     async uploadFile(@UploadedFiles() files: Express.Multer.File[]) {
 
         if (files.length > 0) {
