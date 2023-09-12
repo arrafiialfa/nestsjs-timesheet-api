@@ -34,3 +34,8 @@ export enum Month {
     November = 'November',
     December = 'December'
 }
+
+export enum RoleNames {
+    checker2 = 'Checker II',
+    site_inspector = 'Site Inspector',
+}
