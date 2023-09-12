@@ -4,6 +4,7 @@ import { UpdateHolidayDto } from './dto/update-holiday.dto';
 import { Repository } from 'typeorm';
 import { Holiday } from 'src/entities/holiday.entity';
 
+
 @Injectable()
 export class HolidayService {
 
@@ -15,6 +16,10 @@ export class HolidayService {
   create(createHolidayDto: CreateHolidayDto) {
     const newHolday = this.holidayRepository.create(createHolidayDto);
     return this.holidayRepository.save(newHolday);
+  }
+
+  createFromCsv(csv: Express.Multer.File) {
+    return csv
   }
 
   findAll() {
