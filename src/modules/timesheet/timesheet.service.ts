@@ -16,6 +16,16 @@ export class TimesheetService {
     private userService: UsersService,
   ) { }
 
+  private checkUserRole(user, user_role, roleToCheck, roleLabel?): Array<string> {
+    const errors = [];
+    if (!user) {
+      errors.push(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
+    } else if (user_role?.name !== roleToCheck) {
+      errors.push(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck} or ${roleLabel ?? roleToCheck}_id does not have a role`)
+    }
+    return errors
+  }
+
   async create(createTimesheetDto: CreateTimesheetDto, user_id: number) {
 
     const {
@@ -51,16 +61,6 @@ export class TimesheetService {
     return this.timesheetRepository.save(newTimesheet)
   }
 
-  private checkUserRole(user, user_role, roleToCheck, roleLabel?): Array<string> {
-    const errors = [];
-    if (!user) {
-      errors.push(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
-    } else if (user_role?.name !== roleToCheck) {
-      errors.push(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck} or ${roleLabel ?? roleToCheck}_id does not have a role`)
-    }
-    return errors
-  }
-
   findAll(): Promise<Timesheet[]> {
     return this.timesheetRepository.find();
   }
@@ -75,7 +75,33 @@ export class TimesheetService {
     return timesheet;
   }
 
-  update(id: number, updateTimesheetDto: UpdateTimesheetDto) {
+  async update(id: number, updateTimesheetDto: UpdateTimesheetDto) {
+
+    const rolesToCheck = [
+      {
+        id: updateTimesheetDto.site_inspector_id,
+        roleToCheck: RoleNames.site_inspector
+      },
+      {
+        id: updateTimesheetDto.checker_2_id,
+        roleToCheck: RoleNames.checker2
+      }
+    ]
+
+    const errMssgs = []
+
+    for (const role of rolesToCheck) {
+      if (role.id) {
+        const [user, user_role] = await this.userService.getUserRole(role.id)
+        const errors = this.checkUserRole(user, user_role, role.roleToCheck)
+        errMssgs.push(...errors)
+      }
+    }
+
+    if (errMssgs.length > 0) {
+      throw new Error(`${errMssgs.join(', ')}`)
+    }
+
     return this.timesheetRepository.update(id, updateTimesheetDto);
   }
 
