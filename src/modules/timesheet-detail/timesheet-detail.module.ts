@@ -6,9 +6,11 @@ import { timesheetDetailProviders } from 'src/entities/providers/timesheet_detai
 import { TimesheetModule } from '../timesheet/timesheet.module';
 import { ScopeOfWorkModule } from '../scope-of-work/scope-of-work.module';
 import { ProjectModule } from '../project/project.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule, ProjectModule],
+  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule, ProjectModule, JwtModule, AuthModule],
   controllers: [TimesheetDetailController],
   providers: [TimesheetDetailService, ...timesheetDetailProviders,],
   exports: [TimesheetDetailService]

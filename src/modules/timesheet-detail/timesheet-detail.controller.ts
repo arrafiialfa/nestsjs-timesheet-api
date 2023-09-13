@@ -1,20 +1,33 @@
-import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, Request } from '@nestjs/common';
 import { TimesheetDetailService } from './timesheet-detail.service';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
+import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/auth.service';
+import { JWT_SECRET } from 'src/constants';
 
 @Public()
 @ApiTags('timesheet-details')
 @Controller('timesheet-detail')
 export class TimesheetDetailController {
-  constructor(private readonly timesheetDetailService: TimesheetDetailService) { }
+  constructor(
+    private readonly timesheetDetailService: TimesheetDetailService,
+    private jwtService: JwtService,
+    private authService: AuthService) { }
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto) {
-    return this.timesheetDetailService.create(createTimesheetDetailDto);
+  async create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto, @Request() request) {
+    const token = this.authService.extractTokenFromHeader(request)
+    const payload = await this.jwtService.verifyAsync(
+      token,
+      {
+        secret: JWT_SECRET,
+      }
+    );
+    return this.timesheetDetailService.create(createTimesheetDetailDto, payload.sub);
   }
 
   @Get()

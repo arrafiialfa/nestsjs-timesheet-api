@@ -6,6 +6,7 @@ import { TimesheetDetail } from 'src/entities/timesheet_detail.entity';
 import { TimesheetService } from '../timesheet/timesheet.service';
 import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
 import { ProjectService } from '../project/project.service';
+import { CreateTimesheetDto } from '../timesheet/dto/create-timesheet.dto';
 @Injectable()
 export class TimesheetDetailService {
 
@@ -17,15 +18,15 @@ export class TimesheetDetailService {
     private projectService: ProjectService
   ) { }
 
-  async create(createTimesheetDetailDto: CreateTimesheetDetailDto) {
+  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, user_id) {
+
+    const { timesheet_id, project_id, scope_of_work_id } = createTimesheetDetailDto
 
     const errMssg = [];
-    const timesheet = await this.timesheetService.findOne(createTimesheetDetailDto.timesheet_id)
-    const project = await this.projectService.findOne(createTimesheetDetailDto.project_id);
-    const scopeOfWork = await this.scopeOfWorkService.findOne(createTimesheetDetailDto.scope_of_work_id)
-    if (!timesheet) {
-      errMssg.push('Check your timesheet_id, Timesheet is not found in DB. ')
-    }
+    const timesheet = await this.timesheetService.findOne(timesheet_id)
+    const project = await this.projectService.findOne(project_id);
+    const scopeOfWork = await this.scopeOfWorkService.findOne(scope_of_work_id)
+
     if (!project) {
       errMssg.push('Check your project_id, Project is not found in DB. ')
     }
@@ -37,9 +38,20 @@ export class TimesheetDetailService {
       throw new Error(errMssg.join(", "))
     }
 
+    let new_timesheet = null
+    if (!timesheet) {
+      const createTimesheetDto: CreateTimesheetDto = {
+        site_inspector_id: createTimesheetDetailDto.site_inspector_id,
+        checker_2_id: createTimesheetDetailDto.checker_2_id,
+        period: createTimesheetDetailDto.period
+      }
+
+      new_timesheet = await this.timesheetService.create(createTimesheetDto, user_id)
+    }
+
     const newTimesheetDetail = this.timesheetDetailRepository.create(
       {
-        timesheet: timesheet,
+        timesheet: timesheet ?? new_timesheet,
         project: project,
         scope_of_work: scopeOfWork,
         ...createTimesheetDetailDto
