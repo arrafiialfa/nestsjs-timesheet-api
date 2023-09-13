@@ -31,9 +31,4 @@ export class UsersService {
         return this.userRepository.save(newUser);
     }
 
-    async getUserRole(id: number) {
-        const user = await this.userRepository.findOneBy({ id: id })
-        console.log(user)
-        return [user, user?.role]
-    }
 }

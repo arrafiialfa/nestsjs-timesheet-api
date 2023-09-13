@@ -6,6 +6,7 @@ import { Timesheet } from 'src/entities/timesheet.entity';
 import { UsersService } from '../users/users.service';
 import { RoleNames } from 'src/enums';
 import { TimesheetStatus } from 'src/enums';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class TimesheetService {
@@ -16,12 +17,14 @@ export class TimesheetService {
     private userService: UsersService,
   ) { }
 
-  private checkUserRole(user, user_role, roleToCheck, roleLabel?): Array<string> {
+  private checkUserRole(user: User, roleToCheck: string, roleLabel?: string): Array<string> {
     const errors = [];
     if (!user) {
       errors.push(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
-    } else if (user_role?.name !== roleToCheck) {
-      errors.push(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck} or ${roleLabel ?? roleToCheck}_id does not have a role`)
+    } else if (!user.role) {
+      errors.push(`${roleLabel ?? roleToCheck}_id provided does not have a role`)
+    } else if (user.role?.name !== roleToCheck) {
+      errors.push(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck}`)
     }
     return errors
   }
@@ -32,18 +35,19 @@ export class TimesheetService {
       site_inspector_id, checker_2_id
     } = createTimesheetDto
 
+    //if server throw error immediately client wont be able to know if the next id has an error or not
     const errMssg = [];
 
     const user = await this.userService.findOneById(user_id)
-    const [site_inspector, siteInspector_role] = await this.userService.getUserRole(site_inspector_id)
-    const [checker_2, checker_2_role] = await this.userService.getUserRole(checker_2_id)
+    const site_inspector = await this.userService.findOneById(site_inspector_id)
+    const checker_2 = await this.userService.findOneById(checker_2_id)
 
     if (!user) {
       errMssg.push('user is not found in the database.')
     }
 
-    const site_inspector_errors = this.checkUserRole(site_inspector, siteInspector_role, RoleNames.site_inspector)
-    const checker_2_errors = this.checkUserRole(checker_2, checker_2_role, RoleNames.checker2)
+    const site_inspector_errors = this.checkUserRole(site_inspector, RoleNames.site_inspector)
+    const checker_2_errors = this.checkUserRole(checker_2, RoleNames.checker2)
     errMssg.push(...site_inspector_errors);
     errMssg.push(...checker_2_errors);
 
@@ -92,8 +96,8 @@ export class TimesheetService {
 
     for (const role of rolesToCheck) {
       if (role.id) {
-        const [user, user_role] = await this.userService.getUserRole(role.id)
-        const errors = this.checkUserRole(user, user_role, role.roleToCheck)
+        const user = await this.userService.findOneById(role.id)
+        const errors = this.checkUserRole(user, role.roleToCheck)
         errMssgs.push(...errors)
       }
     }
