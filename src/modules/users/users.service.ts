@@ -33,6 +33,7 @@ export class UsersService {
 
     async getUserRole(id: number) {
         const user = await this.userRepository.findOneBy({ id: id })
-        return user?.role
+        console.log(user)
+        return [user, user?.role]
     }
 }

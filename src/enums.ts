@@ -39,3 +39,10 @@ export enum RoleNames {
     checker2 = 'Checker II',
     site_inspector = 'Site Inspector',
 }
+
+export enum TimesheetStatus {
+    Accepted = 'Accepted',
+    Rejected = 'Rejected',
+    Waiting = 'Waiting',
+    Revision = 'Revision',
+}

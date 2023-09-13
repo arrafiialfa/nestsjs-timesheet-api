@@ -14,18 +14,18 @@ export class Timesheet {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @ManyToOne(() => User, { nullable: true })
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'site_inspector_id' })
     site_inspector: User | null;
 
-    @ManyToOne(() => User, { nullable: true })
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'checker_2_id' })
     'checker_2': User | null;
 
     @Column({ length: 191, enum: ['accepted', 'rejected', 'waiting', 'revision'] })
     status: string;
 
-    @Column({ type: 'timestamp', unique: true, comment: 'period is date + year' })
+    @Column({ type: 'timestamp', unique: true, comment: 'period is year+month YYYY-MM' })
     period: string;
 
     @CreateDateColumn()
