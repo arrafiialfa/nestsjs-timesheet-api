@@ -1,6 +1,6 @@
 import { PartialType } from "@nestjs/mapped-types";
-import { IsEnum, IsNotEmpty, IsOptional } from "class-validator";
-import { Weather } from "src/enums";
+import { IsEnum, IsNotEmpty, IsOptional, Matches } from "class-validator";
+import { TimesheetLeaves, Weather } from "src/enums";
 import { CreateTimesheetDto } from "src/modules/timesheet/dto/create-timesheet.dto";
 
 export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
@@ -16,16 +16,25 @@ export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
 
     @IsNotEmpty()
     @IsEnum(Weather)
-    weather: string;
+    weather: Weather;
 
     @IsNotEmpty()
     manpower_qty: number;
 
     @IsNotEmpty()
-    value: number;
+    date: Date;
 
     @IsNotEmpty()
-    date: Date;
+    @Matches(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, { message: 'Invalid time format. Use HH:mm:ss in 24-hour format.' })
+    clock_in: string;
+
+    @IsNotEmpty()
+    @Matches(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, { message: 'Invalid time format. Use HH:mm:ss in 24-hour format.' })
+    clock_out: string;
+
+    @IsOptional()
+    @IsEnum(TimesheetLeaves)
+    leave_type: TimesheetLeaves
 
     @IsOptional()
     description: string | null;
