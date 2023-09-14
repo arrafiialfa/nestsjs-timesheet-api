@@ -1,4 +1,5 @@
 import { PartialType } from "@nestjs/mapped-types";
+import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsOptional, Matches } from "class-validator";
 import { TimesheetLeaves, Weather } from "src/enums";
 import { CreateTimesheetDto } from "src/modules/timesheet/dto/create-timesheet.dto";
@@ -39,6 +40,6 @@ export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
     @IsOptional()
     description: string | null;
 
-    @IsOptional()
-    file_path: string | null;
+    @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
+    files: any[];
 }
