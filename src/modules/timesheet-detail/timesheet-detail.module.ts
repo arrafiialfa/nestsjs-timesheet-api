@@ -8,9 +8,10 @@ import { ScopeOfWorkModule } from '../scope-of-work/scope-of-work.module';
 import { ProjectModule } from '../project/project.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
-  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule, ProjectModule, JwtModule, AuthModule],
+  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule, ProjectModule, JwtModule, AuthModule, FilesModule],
   controllers: [TimesheetDetailController],
   providers: [TimesheetDetailService, ...timesheetDetailProviders,],
   exports: [TimesheetDetailService]

@@ -7,6 +7,9 @@ import { TimesheetService } from '../timesheet/timesheet.service';
 import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
 import { ProjectService } from '../project/project.service';
 import { CreateTimesheetDto } from '../timesheet/dto/create-timesheet.dto';
+import { FilesService } from '../files/files.service';
+import { DEFAULT_WORK_HOURS } from 'src/constants';
+import { parse } from "date-fns"
 @Injectable()
 export class TimesheetDetailService {
 
@@ -15,12 +18,33 @@ export class TimesheetDetailService {
     private timesheetDetailRepository: Repository<TimesheetDetail>,
     private timesheetService: TimesheetService,
     private scopeOfWorkService: ScopeOfWorkService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private filesService: FilesService
   ) { }
 
-  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, user_id) {
 
-    const { timesheet_id, project_id, scope_of_work_id } = createTimesheetDetailDto
+  private calculateValue(clock_in: string, clock_out: string): number {
+    const format = 'HH:mm:ss';
+    const parsedClockIn = parse(clock_in, format, new Date());
+    const parsedClockOut = parse(clock_out, format, new Date());
+
+    const workHours = parsedClockOut.getTime() - parsedClockIn.getTime();
+    const hours = workHours / (60 * 60 * 1000); // Convert milliseconds to hours
+
+    return hours / DEFAULT_WORK_HOURS;
+  }
+
+  private async handleFileUpload(files: Express.Multer.File[]): Promise<string> {
+    if (files.length > 0) {
+      const paths = await this.filesService.saveFiles(files)
+      return paths.join(' | ')
+    }
+    return null;
+  }
+
+  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, user_id: number, files?: Express.Multer.File[]) {
+
+    const { timesheet_id, project_id, scope_of_work_id, clock_in, clock_out } = createTimesheetDetailDto
 
     const errMssg = [];
     const timesheet = await this.timesheetService.findOne(timesheet_id)
@@ -54,6 +78,8 @@ export class TimesheetDetailService {
         timesheet: timesheet ?? new_timesheet,
         project: project,
         scope_of_work: scopeOfWork,
+        value: this.calculateValue(clock_in, clock_out),
+        file_path: await this.handleFileUpload(files),
         ...createTimesheetDetailDto
       }
     )

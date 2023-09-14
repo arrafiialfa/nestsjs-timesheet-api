@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, Request, UploadedFiles } from '@nestjs/common';
 import { TimesheetDetailService } from './timesheet-detail.service';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
@@ -19,7 +19,8 @@ export class TimesheetDetailController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  async create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto, @Request() request) {
+  @ApiConsumes('multipart/form-data')
+  async create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto, @UploadedFiles() files, @Request() request) {
     const token = this.authService.extractTokenFromHeader(request)
     const payload = await this.jwtService.verifyAsync(
       token,
@@ -27,7 +28,7 @@ export class TimesheetDetailController {
         secret: JWT_SECRET,
       }
     );
-    return this.timesheetDetailService.create(createTimesheetDetailDto, payload.sub);
+    return this.timesheetDetailService.create(createTimesheetDetailDto, payload.sub, files);
   }
 
   @Get()

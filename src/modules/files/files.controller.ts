@@ -22,7 +22,6 @@ export class FilesController {
 
         if (files.length > 0) {
             const savedFilePath = await this.fileService.saveFiles(files);
-
             return { message: 'Files uploaded successfully', savedFilePath }
         }
 
