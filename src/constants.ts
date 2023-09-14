@@ -3,6 +3,7 @@ dotenv.config();
 
 export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
 export const JWT_SECRET = process.env.JWT_SECRET;
+export const MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP = 3
 
 //TIMESHEET CONSTANTS
 export const DEFAULT_CLOCK_IN = '08:00:00'

@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt'
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Request } from "express"
+import { MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP } from 'src/constants';
 
 @Injectable()
 export class AuthService {
@@ -15,11 +16,10 @@ export class AuthService {
     ) { }
 
     private readonly logger = new Logger(AuthService.name)
-    private maxConsecutiveFailsByEmailIP = 5;
 
     private limiterConsecutiveFailsByEmailIP = new RateLimiterMemory({
         keyPrefix: 'login_fail_consecutive_username_ip',
-        points: this.maxConsecutiveFailsByEmailIP,
+        points: MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP,
         duration: 60 * 60 * 3, // Store number for three hours since first fail
         blockDuration: 60 * 15, // Block for 15 minutes
     });
@@ -31,7 +31,7 @@ export class AuthService {
         const rlEmail = await this.limiterConsecutiveFailsByEmailIP.get(email_ip);
 
 
-        if (rlEmail?.consumedPoints >= this.maxConsecutiveFailsByEmailIP) {
+        if (rlEmail?.consumedPoints >= MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP) {
             const retrySecs = Math.round(rlEmail.msBeforeNext / 1000) || 1;
             throw new HttpException(`Too Many Failed Attempts, retry after ${retrySecs} seconds`, HttpStatus.TOO_MANY_REQUESTS);
         }
