@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { ScopeOfWork } from './scope_of_work.entity';
 import { Project } from './project.entity';
 import { Timesheet } from './timesheet.entity';
+import { TimesheetLeaves, Weather } from 'src/enums';
+import { DEFAULT_CLOCK_IN, DEFAULT_CLOCK_OUT } from 'src/constants';
 
 @Entity('timesheet_details')
 export class TimesheetDetail {
@@ -20,11 +22,11 @@ export class TimesheetDetail {
     @JoinColumn({ name: 'project_id' })
     project: Project;
 
-    @Column({ enum: ['sunshine', 'cloudy', 'partly cloudy', 'overcast', 'raining', 'snowing', 'foggy', 'thunder and lightning', 'windy'] })
-    weather: string;
+    @Column({ type: 'enum', enum: Weather })
+    weather: Weather;
 
     @Column()
-    manpower_qty: number
+    manpower_qty: number;
 
     @Column({ length: 191, nullable: true })
     description: string | null
@@ -32,8 +34,20 @@ export class TimesheetDetail {
     @Column({ comment: 'Max. 2 filepath. Implode with |', nullable: true })
     file_path: string | null
 
-    @Column({ type: 'timestamp' })
+    @Column()
+    value: number;
+
+    @Column({ type: 'date' })
     date: Date;
+
+    @Column({ type: "enum", enum: TimesheetLeaves, nullable: true })
+    leave_type: TimesheetLeaves | null
+
+    @Column({ type: 'time without time zone', default: DEFAULT_CLOCK_IN })
+    clock_in: Date;
+
+    @Column({ type: 'time without time zone', default: DEFAULT_CLOCK_OUT })
+    clock_out: Date;
 
     @CreateDateColumn()
     created_at: Date;
