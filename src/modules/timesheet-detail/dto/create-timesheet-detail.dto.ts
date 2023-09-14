@@ -1,8 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsOptional, Matches } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { IsEnum, IsNotEmpty, IsOptional } from "class-validator";
 import { Weather } from "src/enums";
+import { CreateTimesheetDto } from "src/modules/timesheet/dto/create-timesheet.dto";
 
-export class CreateTimesheetDetailDto {
+export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
 
     @IsOptional()
     timesheet_id: number;
@@ -31,27 +32,4 @@ export class CreateTimesheetDetailDto {
 
     @IsOptional()
     file_path: string | null;
-
-    @ApiProperty({
-        description: 'Must be provided in order to create new Timesheet IF timesheet_id is not provided'
-    })
-    @IsOptional()
-    site_inspector_id: number | null;
-
-    @ApiProperty({
-        description: 'Must be provided in order to create new Timesheet IF timesheet_id is not provided'
-    })
-    @IsOptional()
-    checker_2_id: number | null;
-
-    @ApiProperty({
-        description: 'Must be provided in order to create new Timesheet IF timesheet_id is not provided'
-    })
-    @IsOptional()
-    @Matches(/^(19|20)\d{2}-(0[1-9]|1[0-2])$/, { message: "Invalid date format. Use yyyy-mm" })
-    @ApiProperty({
-        description: 'Period must be in year-month format (YYYY:MM)'
-    })
-    period: string | null;
-
 }
