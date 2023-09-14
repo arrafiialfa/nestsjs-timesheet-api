@@ -46,3 +46,9 @@ export enum TimesheetStatus {
     Waiting = 'Waiting',
     Revision = 'Revision',
 }
+
+export enum TimesheetLeaves {
+    Cuti = 'Cuti',
+    Ijin = 'Ijin',
+    Dinas = 'Dinas',
+}
