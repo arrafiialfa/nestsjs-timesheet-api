@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, OneToMany, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { ScopeOfWork } from './scope_of_work.entity';
 import { Project } from './project.entity';
 import { Timesheet } from './timesheet.entity';
 import { TimesheetLeaves, Weather } from 'src/enums';
 import { DEFAULT_CLOCK_IN, DEFAULT_CLOCK_OUT } from 'src/constants';
+import { TimesheetDetailDocument } from './document.entity';
 
 @Entity('timesheet_details')
 export class TimesheetDetail {
@@ -13,6 +14,9 @@ export class TimesheetDetail {
     @ManyToOne(() => Timesheet)
     @JoinColumn({ name: 'timesheet_id' })
     timesheet: Timesheet;
+
+    @OneToMany(() => TimesheetDetailDocument, timesheetDetailDocument => timesheetDetailDocument.timesheet_detail)
+    documents: TimesheetDetailDocument[]
 
     @ManyToOne(() => ScopeOfWork)
     @JoinColumn({ name: 'scope_of_work_id' })
