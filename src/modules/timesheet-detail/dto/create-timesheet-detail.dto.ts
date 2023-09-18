@@ -7,7 +7,7 @@ import { CreateTimesheetDto } from "src/modules/timesheet/dto/create-timesheet.d
 export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
 
     @IsOptional()
-    timesheet_id: number;
+    timesheet_id: number | null;
 
     @IsNotEmpty()
     scope_of_work_id: number;
@@ -35,7 +35,7 @@ export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
 
     @IsOptional()
     @IsEnum(TimesheetLeaves)
-    leave_type: TimesheetLeaves
+    leave_type: TimesheetLeaves | null
 
     @IsOptional()
     description: string | null;
