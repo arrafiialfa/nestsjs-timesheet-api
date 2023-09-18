@@ -13,7 +13,6 @@ export class FilesService {
         fs.writeFileSync(filePath, file.buffer);
 
         return filePath;
-
     }
 
     async saveFiles(files: Express.Multer.File[]): Promise<Array<string>> {
@@ -23,9 +22,14 @@ export class FilesService {
             const filePath = path.join(folderPath, file.originalname);
 
             fs.writeFileSync(filePath, file.buffer);
-            saved_files_path.push(filePath);
+            saved_files_path.push({ name: file.originalname, path: filePath });
         }
         return saved_files_path;
     }
 
+    async updateFile(path_to_update, file: Express.Multer.File): Promise<any> {
+        const folderPath = path_to_update;
+        fs.writeFileSync(folderPath, file.buffer);
+        return { name: file.originalname, path: folderPath }
+    }
 }
