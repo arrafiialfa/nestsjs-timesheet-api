@@ -17,6 +17,7 @@ import { TimesheetDetailModule } from './modules/timesheet-detail/timesheet-deta
 import { ScopeOfWorkModule } from './modules/scope-of-work/scope-of-work.module';
 import { ProjectModule } from './modules/project/project.module';
 import { HolidayModule } from './modules/holiday/holiday.module';
+import { ExcelModule } from './modules/excel/excel.module';
 
 
 @Module({
@@ -28,7 +29,7 @@ import { HolidayModule } from './modules/holiday/holiday.module';
     }),
     AuthModule, UsersModule, FilesModule, BcryptModule,
     TimesheetModule, TimesheetDetailModule, ScopeOfWorkModule,
-    ProjectModule, HolidayModule
+    ProjectModule, HolidayModule, ExcelModule
   ],
   controllers: [AppController],
   providers: [AppService,
