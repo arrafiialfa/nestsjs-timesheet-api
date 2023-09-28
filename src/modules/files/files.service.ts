@@ -32,4 +32,5 @@ export class FilesService {
         fs.writeFileSync(folderPath, file.buffer);
         return { name: file.originalname, path: folderPath }
     }
+
 }
