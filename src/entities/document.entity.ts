@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { TimesheetDetail } from './timesheet_detail.entity';
 
 @Entity('documents')
 export class Document {
@@ -19,5 +20,19 @@ export class Document {
 
     @DeleteDateColumn()
     deleted_at: Date;
+
+    @ManyToMany(() => TimesheetDetail)
+    @JoinTable({
+        name: 'timesheet_detail_document',
+        joinColumn: {
+            name: 'document_id',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'timesheet_detail_id',
+            referencedColumnName: 'id',
+        },
+    })
+    timesheetDetails: TimesheetDetail[];
 
 }
