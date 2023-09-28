@@ -1,14 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { TimesheetDetail } from './timesheet_detail.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 
-@Entity('timesheet_detail_documents')
-export class TimesheetDetailDocument {
+@Entity('documents')
+export class Document {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @ManyToOne(() => TimesheetDetail)
-    @JoinColumn({ name: 'timesheet_detail_id' })
-    timesheet_detail: TimesheetDetail;
 
     @Column({ length: 191 })
     name: string

@@ -1,10 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
 export class CreateDocumentDto {
     @IsNotEmpty()
-    timesheet_detail_id: number
+    name: string;
 
-    @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
-    files: any[];
+    @IsNotEmpty()
+    path: string;
 }
