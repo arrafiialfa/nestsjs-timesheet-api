@@ -4,8 +4,7 @@ import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
 import { Repository } from 'typeorm';
 import { Timesheet } from 'src/entities/timesheet.entity';
 import { UsersService } from '../users/users.service';
-import { RoleNames } from 'src/enums';
-import { TimesheetStatus } from 'src/enums';
+import { RoleNames, TimesheetStatus } from 'src/enums';
 import { User } from 'src/entities/user.entity';
 
 @Injectable()
