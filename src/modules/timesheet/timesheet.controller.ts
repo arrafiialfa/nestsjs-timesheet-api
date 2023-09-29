@@ -6,11 +6,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_SECRET } from 'src/constants';
+import { CreateTimesheetToExcelDto } from '../timesheet-to-excel/dto/create-timesheet-to-excel.dto';
+import { TimesheetToExcelService } from '../timesheet-to-excel/timesheet-to-excel.service';
 
 @ApiTags('Timesheet')
 @Controller('timesheet')
 export class TimesheetController {
-  constructor(private readonly timesheetService: TimesheetService, private authService: AuthService, private jwtService: JwtService) { }
+  constructor(private readonly timesheetService: TimesheetService, private readonly toExcelService: TimesheetToExcelService, private authService: AuthService, private jwtService: JwtService) { }
 
   @Post()
   @HttpCode(HttpStatus.OK)
@@ -47,5 +49,11 @@ export class TimesheetController {
   @HttpCode(HttpStatus.OK)
   remove(@Param('id') id: string) {
     return this.timesheetService.remove(+id);
+  }
+
+  @Post('/convert-to-excel')
+  @HttpCode(HttpStatus.OK)
+  toExcel(@Body() convertToExcel: CreateTimesheetToExcelDto) {
+    return this.toExcelService.create(convertToExcel);
   }
 }

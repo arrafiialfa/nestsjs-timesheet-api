@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TimesheetToExcelService } from './timesheet-to-excel.service';
-import { TimesheetToExcelController } from './timesheet-to-excel.controller';
 
 @Module({
-  controllers: [TimesheetToExcelController],
-  providers: [TimesheetToExcelService]
+  controllers: [],
+  providers: [TimesheetToExcelService],
+  exports: [TimesheetToExcelService]
 })
-export class TimesheetToExcelModule {}
+export class TimesheetToExcelModule { }
