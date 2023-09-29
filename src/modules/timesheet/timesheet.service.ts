@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Timesheet } from 'src/entities/timesheet.entity';
 import { UsersService } from '../users/users.service';
 import { RoleNames, TimesheetStatus } from 'src/enums';
@@ -70,6 +70,10 @@ export class TimesheetService {
 
   findAll(): Promise<Timesheet[]> {
     return this.timesheetRepository.find();
+  }
+
+  find(where: FindOptionsWhere<Timesheet>): Promise<Timesheet[]> {
+    return this.timesheetRepository.findBy(where)
   }
 
   async findOne(id: number): Promise<Timesheet> {

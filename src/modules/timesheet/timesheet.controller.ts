@@ -6,7 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_SECRET } from 'src/constants';
-import { CreateTimesheetToExcelDto } from '../timesheet-to-excel/dto/create-timesheet-to-excel.dto';
+import { CreateExcelDto } from './dto/create-timesheet-to-excel.dto';
 import { TimesheetToExcelService } from '../timesheet-to-excel/timesheet-to-excel.service';
 
 @ApiTags('Timesheet')
@@ -53,7 +53,8 @@ export class TimesheetController {
 
   @Post('/convert-to-excel')
   @HttpCode(HttpStatus.OK)
-  toExcel(@Body() convertToExcel: CreateTimesheetToExcelDto) {
-    return this.toExcelService.create(convertToExcel);
+  async toExcel(@Body() excelDto: CreateExcelDto) {
+    const timesheet = await this.timesheetService.find(excelDto)
+    return this.toExcelService.create(timesheet);
   }
 }
