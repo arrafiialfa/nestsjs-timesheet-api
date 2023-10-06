@@ -55,6 +55,6 @@ export class TimesheetController {
   @HttpCode(HttpStatus.OK)
   async toExcel(@Body() excelDto: CreateExcelDto) {
     const timesheet = await this.timesheetService.find(excelDto)
-    return this.toExcelService.create(timesheet);
+    return this.toExcelService.create([]);
   }
 }
