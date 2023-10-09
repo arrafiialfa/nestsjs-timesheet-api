@@ -10,18 +10,16 @@ const table_header_style = {
     alignment: { horizontal: 'center' }
 }
 
-export const columns = {
-    th_dates_2: [...new Array(31)].map((date, i) => {
-        return {
-            origin: `${EXCEL_COLUMNS[4 + i]}11`,
-            style: table_header_style,
-            value: i + 1
-        }
-    }),
+const th_dates_2 = [...new Array(31)].map((date, i) => {
+    return {
+        origin: `${EXCEL_COLUMNS[4 + i]}11`,
+        style: table_header_style,
+        value: i + 1
+    }
+})
 
-}
 
-//this is the fixed header for the timesheet excel
+//this is the fixed layouts for the timesheet excel
 export const fixed_layout = [
     {
         origin: 'B2',
@@ -109,12 +107,21 @@ export const fixed_layout = [
     },
 
 
-    ...columns.th_dates_2
+    ...th_dates_2
 
 
 
 ]
 
+export const project_layout = {
+    project_number_column: 'B',
+    project_name_column: 'C',
+    project_code_column: 'D',
+    project_values_range: { from: 'E', to: 'AI' },
+    project_total_days_column: 'AJ',
+    mm_proportion_column: 'AK',
+    superior_signature_column: 'AL'
+}
 
 
 

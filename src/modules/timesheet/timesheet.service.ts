@@ -34,9 +34,6 @@ export class TimesheetService {
       site_inspector_id, checker_2_id
     } = createTimesheetDto
 
-    if (!site_inspector_id || !checker_2_id) {
-      throw new Error('site_inspector_id and checker_2_id must be provided in order to create a Timesheet')
-    }
 
     //if server threw error immediately client wont be able to know if the next id has an error or not
     const errMssg = [];

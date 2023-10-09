@@ -44,10 +44,10 @@ export class TimesheetDetailService {
 
   async create(createTimesheetDetailDto: CreateTimesheetDetailDto, user_id: number, files?: Express.Multer.File[]) {
 
-    const { timesheet_id, project_id, scope_of_work_id, clock_in, clock_out } = createTimesheetDetailDto
+    const { project_id, scope_of_work_id, clock_in, clock_out } = createTimesheetDetailDto
 
     const errMssg = [];
-    const timesheet = await this.timesheetService.findOne(timesheet_id)
+    const timesheet = await this.timesheetService.find({ period: createTimesheetDetailDto.period })
     const project = await this.projectService.findOne(project_id);
     const scopeOfWork = await this.scopeOfWorkService.findOne(scope_of_work_id)
 

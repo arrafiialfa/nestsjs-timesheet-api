@@ -5,10 +5,6 @@ import { TimesheetLeaves, Weather } from "src/enums";
 import { CreateTimesheetDto } from "src/modules/timesheet/dto/create-timesheet.dto";
 
 export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
-
-    @IsOptional()
-    timesheet_id: number | null;
-
     @IsNotEmpty()
     scope_of_work_id: number;
 
