@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Timesheet } from 'src/entities/timesheet.entity';
 import * as ExcelJS from 'exceljs'
 import { CreateTimesheetExcelDto } from './dto/create-timesheet-excel.dto';
+import * as fs from 'fs';
+import * as path from 'path';
+import { columns, fixed_layout } from './excel/timesheet-excel-layout';
 
 @Injectable()
 export class TimesheetToExcelService {
@@ -40,22 +43,52 @@ export class TimesheetToExcelService {
       }, //ALL THE WAY TO DATE '31' :{}
     }
 
+  private TIMESHEET_VALUES_MAP = [
+    ['DATE', 'VALUES'],
+    [2, [1, 1, 1, 0.5, 1]]
+  ]
+
   //ITERATES TIMESHEET_DATAS
   //PUSH TIMESHEET_DATA_PROJECT<X> VALUES TO TIMESHEET_VALUES
 
   //CALCULATE TOTAL FROM TIMESHEET_VALUES
   //ADD NEW ROW FOR TOTAL
 
-  create(createTimesheetExcelDto: CreateTimesheetExcelDto[]) {
+  async create(createTimesheetExcelDto: CreateTimesheetExcelDto[]) {
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('timesheet', { pageSetup: { paperSize: 9, orientation: 'landscape' } })
-    sheet.columns = [
-      { header: 'Id', key: 'id', width: 10 },
-      { header: 'Name', key: 'name', width: 32 },
-      { header: 'D.O.B.', key: 'DOB', width: 10, outlineLevel: 1 }
-    ];
+
+
+    //sheet.addRows([{ id: 1, name: 'John Dose', dob: new Date(1970, 1, 1) }]);
+
+    const layouts = fixed_layout;
+    console.log(layouts);
+    this.createStaticLayouts(layouts, sheet)
+
+
+
+
+    const folderPath = path.join(__dirname, '..', '..', '..', 'uploads');
+    const filePath = path.join(folderPath, 'test.xlsx');
+
+    await workbook.xlsx.writeFile(filePath)
+
 
     return createTimesheetExcelDto;
   }
+
+  private createStaticLayouts(layout, worksheet: ExcelJS.Worksheet) {
+    layout.map((key, i) => {
+      const cell = worksheet.getCell(layout[i].origin);
+      cell.style = layout[i].style
+      cell.value = layout[i].value
+      if (layout[i].mergeCells) {
+        worksheet.mergeCells(layout[i].mergeCells)
+      }
+    })
+  }
+
+
+
 }

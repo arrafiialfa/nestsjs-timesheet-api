@@ -1,6 +1,7 @@
 import { IsArray, IsNotEmpty } from "class-validator";
 
-export class CreateTimesheetExcelDto {
+
+class RowDto {
     @IsNotEmpty()
     project_name: string;
 
@@ -10,4 +11,24 @@ export class CreateTimesheetExcelDto {
     @IsNotEmpty()
     @IsArray()
     values: [{ date: string, value: number }]
+}
+
+export class CreateTimesheetExcelDto {
+
+    @IsNotEmpty()
+    name: string
+
+    @IsNotEmpty()
+    nip: string
+
+    @IsNotEmpty()
+    job_title: string
+
+    @IsNotEmpty()
+    unit: string
+
+    @IsNotEmpty()
+    @IsArray()
+    rows: [RowDto]
+
 }

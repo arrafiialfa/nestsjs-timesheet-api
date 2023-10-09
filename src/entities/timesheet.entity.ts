@@ -25,7 +25,7 @@ export class Timesheet {
     @Column({ length: 191, enum: ['accepted', 'rejected', 'waiting', 'revision'] })
     status: string;
 
-    @Column({ type: 'timestamp', unique: true, comment: 'period is year+month YYYY-MM' })
+    @Column({ unique: true, comment: 'period is year+month YYYY-MM' })
     period: string;
 
     @CreateDateColumn()

@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JWT_SECRET } from 'src/constants';
 import { CreateExcelDto } from './dto/create-timesheet-to-excel.dto';
 import { TimesheetToExcelService } from '../timesheet-to-excel/timesheet-to-excel.service';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiTags('Timesheet')
 @Controller('timesheet')
@@ -52,6 +53,7 @@ export class TimesheetController {
   }
 
   @Post('/convert-to-excel')
+  @Public()
   @HttpCode(HttpStatus.OK)
   async toExcel(@Body() excelDto: CreateExcelDto) {
     const timesheet = await this.timesheetService.find(excelDto)
