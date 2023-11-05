@@ -9,15 +9,20 @@ import { JWT_SECRET } from 'src/constants';
 import { CreateExcelDto } from './dto/create-timesheet-to-excel.dto';
 import { TimesheetToExcelService } from '../timesheet-to-excel/timesheet-to-excel.service';
 import { Public } from 'src/decorators/public.decorator';
+import { UsersService } from '../users/users.service';
+import { CreateTimesheetExcelDto } from '../timesheet-to-excel/dto/create-timesheet-excel.dto';
 
 @ApiTags('Timesheet')
 @Controller('timesheet')
 export class TimesheetController {
-  constructor(private readonly timesheetService: TimesheetService, private readonly toExcelService: TimesheetToExcelService, private authService: AuthService, private jwtService: JwtService) { }
+  constructor(
+    private readonly timesheetService: TimesheetService,
+    private readonly toExcelService: TimesheetToExcelService,
+    private authService: AuthService,
+    private jwtService: JwtService,
+    private userService: UsersService) { }
 
-  @Post()
-  @HttpCode(HttpStatus.OK)
-  async create(@Body() createTimesheetDto: CreateTimesheetDto, @Request() request) {
+  private async getUserId(@Request() request): Promise<number> {
     const token = this.authService.extractTokenFromHeader(request)
     const payload = await this.jwtService.verifyAsync(
       token,
@@ -25,7 +30,14 @@ export class TimesheetController {
         secret: JWT_SECRET,
       }
     );
-    return this.timesheetService.create(createTimesheetDto, payload.sub);
+    return payload.sub;
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.OK)
+  async create(@Body() createTimesheetDto: CreateTimesheetDto, @Request() request) {
+    const userId = await this.getUserId(request);
+    return this.timesheetService.create(createTimesheetDto, userId);
   }
 
   @Get()
@@ -55,9 +67,24 @@ export class TimesheetController {
   @Post('/convert-to-excel')
   @Public()
   @HttpCode(HttpStatus.OK)
-  async toExcel(@Body() excelDto: CreateExcelDto, @Response() res) {
-    const timesheet = await this.timesheetService.find(excelDto)
-    const buffer = await this.toExcelService.create([]);
+  async toExcel(@Body() excelDto: CreateExcelDto, @Request() request, @Response() res) {
+    const userId = await this.getUserId(request);
+    const user = await this.userService.findOneById(userId);
+    const userTimesheet = await this.timesheetService.findOneBy({
+      period: excelDto.period,
+      user: { id: user.id }
+    })
+
+    const createTimesheetData: CreateTimesheetExcelDto = {
+      name: user.name,
+      nip: user.nip,
+      job_title: user.role.name,
+      timesheet: userTimesheet,
+      year: parseInt(excelDto.period.split('-')[0]),
+      month: excelDto.period.split('-')[1]
+    }
+
+    const buffer = await this.toExcelService.create(createTimesheetData);
     res.setHeader("Content-Type", "application/vnd.ms-excel");
     res.setHeader("Content-disposition", "attachment; filename=biodata.xlsx");
     res.send(buffer);

@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CreateHolidayDto } from './dto/create-holiday.dto';
 import { UpdateHolidayDto } from './dto/update-holiday.dto';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Holiday } from 'src/entities/holiday.entity';
 import * as Papa from 'papaparse'
 
@@ -33,6 +33,10 @@ export class HolidayService {
 
     return { parsedData: data.length, parsingErrors: errors, savedToDB: saved.length, saved: saved }
 
+  }
+
+  find(findOptions: FindOptionsWhere<Holiday>) {
+    return this.holidayRepository.findBy(findOptions)
   }
 
   findAll() {

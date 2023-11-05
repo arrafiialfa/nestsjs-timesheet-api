@@ -1,5 +1,7 @@
 import { EXCEL_COLUMNS } from "src/constants"
 import { Style } from "exceljs"
+import { Repository } from "typeorm"
+import { Timesheet } from "src/entities/timesheet.entity"
 
 interface Layout {
     origin: string,
@@ -153,6 +155,12 @@ export const header: Layout[] = [
 
 
 ]
+
+export function createTimesheetData(data: Repository<Timesheet>) {
+
+    return data;
+
+}
 
 
 

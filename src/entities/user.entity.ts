@@ -1,10 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Role } from './role.entity';
+import { Timesheet } from './timesheet.entity';
 
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @OneToMany(() => Timesheet, Timesheet => Timesheet.user)
+    timesheets: Timesheet[]
 
     @Column({ nullable: true })
     comment: string;

@@ -73,6 +73,20 @@ export class TimesheetService {
     return this.timesheetRepository.findBy(where)
   }
 
+  findOneBy(where: FindOptionsWhere<Timesheet>): Promise<Timesheet> {
+    return this.timesheetRepository.findOne({
+      where: where,
+      relations: {
+        user: true,
+        site_inspector: true,
+        checker_2: true,
+        timesheet_details: {
+          project: true
+        }
+      }
+    })
+  }
+
   async findOne(id: number): Promise<Timesheet> {
     const timesheet = await this.timesheetRepository
       .createQueryBuilder('timesheet')

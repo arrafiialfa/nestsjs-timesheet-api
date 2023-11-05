@@ -1,19 +1,13 @@
 import { IsArray, IsNotEmpty } from "class-validator";
-
-
-class RowDto {
-    @IsNotEmpty()
-    project_name: string;
-
-    @IsNotEmpty()
-    location_code: string;
-
-    @IsNotEmpty()
-    @IsArray()
-    values: [{ date: string, value: number }]
-}
+import { Timesheet } from "src/entities/timesheet.entity";
 
 export class CreateTimesheetExcelDto {
+
+    @IsNotEmpty()
+    year: number;
+
+    @IsNotEmpty()
+    month: string;
 
     @IsNotEmpty()
     name: string
@@ -25,10 +19,7 @@ export class CreateTimesheetExcelDto {
     job_title: string
 
     @IsNotEmpty()
-    unit: string
-
-    @IsNotEmpty()
     @IsArray()
-    rows: [RowDto]
+    timesheet: Timesheet;
 
 }
