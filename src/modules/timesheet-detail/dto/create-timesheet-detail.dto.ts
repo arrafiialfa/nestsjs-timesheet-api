@@ -31,10 +31,10 @@ export class CreateTimesheetDetailDto extends PartialType(CreateTimesheetDto) {
 
     @IsOptional()
     @IsEnum(TimesheetLeaves)
-    leave_type: TimesheetLeaves | null
+    leave_type?: null | TimesheetLeaves
 
     @IsOptional()
-    description: string | null;
+    description?: string | null;
 
     @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
     files: any[];
