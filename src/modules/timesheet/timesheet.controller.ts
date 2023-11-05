@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, HttpStatus, HttpCode, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpStatus, HttpCode, Request, Response } from '@nestjs/common';
 import { TimesheetService } from './timesheet.service';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
@@ -55,8 +55,11 @@ export class TimesheetController {
   @Post('/convert-to-excel')
   @Public()
   @HttpCode(HttpStatus.OK)
-  async toExcel(@Body() excelDto: CreateExcelDto) {
+  async toExcel(@Body() excelDto: CreateExcelDto, @Response() res) {
     const timesheet = await this.timesheetService.find(excelDto)
-    return this.toExcelService.create([]);
+    const buffer = await this.toExcelService.create([]);
+    res.setHeader("Content-Type", "application/vnd.ms-excel");
+    res.setHeader("Content-disposition", "attachment; filename=biodata.xlsx");
+    res.send(buffer);
   }
 }

@@ -1,13 +1,29 @@
 import { EXCEL_COLUMNS } from "src/constants"
+import { Style } from "exceljs"
 
-const default_style = {
-    font: { name: 'Arial Unicode MS', sz: 11 },
+interface Layout {
+    origin: string,
+    style: Partial<Style>,
+    value?: any,
+    mergeCells?: any
+    row?: {
+        key: number,
+        height: number
+    },
+    column?: {
+        key: string,
+        width: number
+    }
+}
+
+const default_style: Partial<Style> = {
+    font: { name: 'Arial Unicode MS', size: 11 },
     alignment: { horizontal: 'left' }
 }
 
-const table_header_style = {
-    font: { name: 'Arial Unicode MS', sz: 10, bold: true },
-    alignment: { horizontal: 'center' }
+const table_header_style: Partial<Style> = {
+    font: { name: 'Arial Unicode MS', size: 10, bold: true },
+    alignment: { horizontal: 'center', wrapText: true }
 }
 
 const th_dates_2 = [...new Array(31)].map((date, i) => {
@@ -18,15 +34,20 @@ const th_dates_2 = [...new Array(31)].map((date, i) => {
     }
 })
 
+const holiday_column_row_height = 75.5;
+const holiday_column_column_width = 8;
+
+
+
 
 //this is the fixed layouts for the timesheet excel
-export const fixed_layout = [
+export const header: Layout[] = [
     {
         origin: 'B2',
         style: {
             font: {
                 name: "Arial Unicode MS",
-                sz: 16,
+                size: 16,
                 bold: true,
             },
             alignment: { horizontal: "center" },
@@ -68,14 +89,22 @@ export const fixed_layout = [
         origin: 'C10',
         style: table_header_style,
         mergeCells: 'C10:C11',
-        value: 'NAMA & LOKASI PROYEK'
+        value: 'NAMA & LOKASI PROYEK',
+        column: {
+            key: 'C',
+            width: 30
+        }
     },
 
     {
         origin: 'D10',
         style: table_header_style,
         mergeCells: 'D10:D11',
-        value: 'Kode Lokasi'
+        value: 'Kode Lokasi',
+        column: {
+            key: 'D',
+            width: 14,
+        }
     },
 
     {
@@ -89,21 +118,33 @@ export const fixed_layout = [
         origin: 'AJ10',
         style: table_header_style,
         mergeCells: 'AJ10:AJ11',
-        value: 'Total Hari'
+        value: 'Total Hari',
+        column: {
+            key: 'AJ',
+            width: 14,
+        }
     },
 
     {
         origin: 'AK10',
         style: table_header_style,
         mergeCells: 'AK10:AK11',
-        value: 'Proporsional MM'
+        value: 'Proporsional MM',
+        column: {
+            key: 'AK',
+            width: 14,
+        }
     },
 
     {
         origin: 'AL10',
         style: table_header_style,
         mergeCells: 'AL10:AL11',
-        value: 'Paraf Atasan Langsung'
+        value: 'Paraf Atasan Langsung',
+        column: {
+            key: 'AL',
+            width: 14
+        }
     },
 
 
@@ -112,6 +153,8 @@ export const fixed_layout = [
 
 
 ]
+
+
 
 export const project_layout = {
     project_number_column: 'B',

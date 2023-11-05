@@ -4,7 +4,7 @@ import * as ExcelJS from 'exceljs'
 import { CreateTimesheetExcelDto } from './dto/create-timesheet-excel.dto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { columns, fixed_layout } from './excel/timesheet-excel-layout';
+import { header } from './excel/timesheet-excel-layout';
 
 @Injectable()
 export class TimesheetToExcelService {
@@ -54,40 +54,78 @@ export class TimesheetToExcelService {
   //CALCULATE TOTAL FROM TIMESHEET_VALUES
   //ADD NEW ROW FOR TOTAL
 
+
   async create(createTimesheetExcelDto: CreateTimesheetExcelDto[]) {
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('timesheet', { pageSetup: { paperSize: 9, orientation: 'landscape' } })
 
+    //CREATE HEADER
+    //create fixed layout
+    header.forEach((layout) => {
+      if (layout.row) {
+        const row = sheet.getRow(layout.row.key);
+        Object.keys(layout.row).forEach(key => row[key] = layout.row[key])
+      }
 
-    //sheet.addRows([{ id: 1, name: 'John Dose', dob: new Date(1970, 1, 1) }]);
+      if (layout.column) {
+        const column = sheet.getColumn(layout.column.key)
+        Object.keys(layout.column).forEach(key => column[key] = layout.column[key])
+      }
 
-    const layouts = fixed_layout;
-    console.log(layouts);
-    this.createStaticLayouts(layouts, sheet)
-
-
-
-
-    const folderPath = path.join(__dirname, '..', '..', '..', 'uploads');
-    const filePath = path.join(folderPath, 'test.xlsx');
-
-    await workbook.xlsx.writeFile(filePath)
-
-
-    return createTimesheetExcelDto;
-  }
-
-  private createStaticLayouts(layout, worksheet: ExcelJS.Worksheet) {
-    layout.map((key, i) => {
-      const cell = worksheet.getCell(layout[i].origin);
-      cell.style = layout[i].style
-      cell.value = layout[i].value
-      if (layout[i].mergeCells) {
-        worksheet.mergeCells(layout[i].mergeCells)
+      const cell = sheet.getCell(layout.origin);
+      cell.style = layout.style
+      cell.value = layout.value
+      if (layout.mergeCells) {
+        sheet.mergeCells(layout.mergeCells)
       }
     })
+
+    //CREATE DATA
+
+
+    //CREATE FOOTER
+
+
+    //CREATE BUFFER
+    const excelBuffer = await workbook.xlsx.writeBuffer();
+
+    return excelBuffer;
   }
+
+
+
+  private async exceljs_createTimesheetExcel(
+    data,
+    worksheet: ExcelJS.Worksheet,
+  ) {
+
+
+    Object.keys(data).forEach((key) => {
+      const cell = worksheet.getCell(data[key].origin);
+      console.log(data[key]);
+      if (key !== "photo") {
+        cell.value = data[key].value;
+      }
+    });
+
+
+
+    //  add image
+    //     const photo1 = workbook.addImage({
+    //       buffer: photo,
+    //       extension: "png",
+    //     });
+
+    //     worksheet.addImage(photo1, data["photo"].frame);
+
+
+
+    // const biodataBuffer = await workbook.xlsx.writeBuffer();
+
+    // return biodataBuffer;
+  }
+
 
 
 
