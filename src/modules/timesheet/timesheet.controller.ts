@@ -2,13 +2,12 @@ import { Controller, Get, Post, Body, Param, HttpStatus, HttpCode, Request, Resp
 import { TimesheetService } from './timesheet.service';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_SECRET } from 'src/constants';
 import { CreateExcelDto } from './dto/create-timesheet-to-excel.dto';
 import { TimesheetToExcelService } from '../timesheet-to-excel/timesheet-to-excel.service';
-import { Public } from 'src/decorators/public.decorator';
 import { UsersService } from '../users/users.service';
 import { CreateTimesheetExcelDto } from '../timesheet-to-excel/dto/create-timesheet-excel.dto';
 
@@ -64,8 +63,8 @@ export class TimesheetController {
     return this.timesheetService.remove(+id);
   }
 
+  @ApiBearerAuth()
   @Post('/convert-to-excel')
-  @Public()
   @HttpCode(HttpStatus.OK)
   async toExcel(@Body() excelDto: CreateExcelDto, @Request() request, @Response() res) {
     const userId = await this.getUserId(request);
@@ -74,6 +73,10 @@ export class TimesheetController {
       period: excelDto.period,
       user: { id: user.id }
     })
+
+    if (!userTimesheet) {
+      throw new Error(`User [${user.name}]'s Timesheet with period [${excelDto.period}] not found`)
+    }
 
     const createTimesheetData: CreateTimesheetExcelDto = {
       name: user.name,

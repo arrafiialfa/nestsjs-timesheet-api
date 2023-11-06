@@ -7,5 +7,5 @@ export class CreateExcelDto {
     @ApiProperty({
         description: 'Period must be in year-month format (YYYY:MM)'
     })
-    period: string;
+    period = "2023-02";
 }
