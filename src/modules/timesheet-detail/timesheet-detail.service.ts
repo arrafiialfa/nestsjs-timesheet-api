@@ -47,8 +47,8 @@ export class TimesheetDetailService {
     const { project_id, scope_of_work_id, clock_in, clock_out } = createTimesheetDetailDto
 
     const errMssg = [];
-    const timesheet = await this.timesheetService.find({ period: createTimesheetDetailDto.period })[0]
-    console.log(timesheet, "thsaksd")
+    const timesheet = await this.timesheetService.findOneBy({ period: createTimesheetDetailDto.period })
+    console.log(timesheet, "test", createTimesheetDetailDto.period);
     const project = await this.projectService.findOne(project_id);
     const scopeOfWork = await this.scopeOfWorkService.findOne(scope_of_work_id)
 

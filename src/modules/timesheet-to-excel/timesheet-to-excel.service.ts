@@ -2,17 +2,27 @@ import { Injectable } from '@nestjs/common';
 import { Timesheet } from 'src/entities/timesheet.entity';
 import * as ExcelJS from 'exceljs'
 import { CreateTimesheetExcelDto } from './dto/create-timesheet-excel.dto';
-import * as fs from 'fs';
-import * as path from 'path';
-import { header } from './excel/timesheet-excel-layout';
+import { createTimesheetData, createTimesheetFooter, createTimesheetHeader, header } from './excel/timesheet-excel-layout';
 import { HolidayService } from '../holiday/holiday.service';
-import { Month } from 'src/enums';
-import { User } from 'src/entities/user.entity';
 import { Project } from 'src/entities/project.entity';
-import { TimesheetDetail } from 'src/entities/timesheet_detail.entity';
+import { Style } from 'exceljs';
 
+interface Layout {
+  origin: string,
+  style: Partial<Style>,
+  value?: any,
+  mergeCells?: any
+  row?: {
+    key: number,
+    height: number
+  },
+  column?: {
+    key: string,
+    width: number
+  }
+}
 
-interface values_per_dates {
+interface ValuesPerDates {
   date: Date,
   isHoliday?: {
     name: string
@@ -39,6 +49,24 @@ export class TimesheetToExcelService {
 
   constructor(private readonly holidayService: HolidayService) { }
 
+  private transformCellFromLayout(layout: Layout, sheet: ExcelJS.Worksheet) {
+    if (layout.row) {
+      const row = sheet.getRow(layout.row.key);
+      Object.keys(layout.row).forEach(key => row[key] = layout.row[key])
+    }
+
+    if (layout.column) {
+      const column = sheet.getColumn(layout.column.key)
+      Object.keys(layout.column).forEach(key => column[key] = layout.column[key])
+    }
+
+    const cell = sheet.getCell(layout.origin);
+    cell.style = layout.style
+    cell.value = layout.value
+    if (layout.mergeCells) {
+      sheet.mergeCells(layout.mergeCells)
+    }
+  }
 
   private async prepareTimesheetData(timesheet: Timesheet) {
     /** 
@@ -51,7 +79,7 @@ export class TimesheetToExcelService {
      * value = values_per_dates 
      * store value from timesheet_details into each date
      */
-    const values_per_dates = new Map<string, values_per_dates>()
+    const values_per_dates = new Map<string, ValuesPerDates>()
 
 
     timesheet.timesheet_details.forEach((details) => {
@@ -87,91 +115,61 @@ export class TimesheetToExcelService {
 
     })
 
-    console.log(timesheetPerProject, values_per_dates)
+    const holidays = await this.holidayService.find({
+      year: parseInt(timesheet.period.split("-")[0]),
+      month: timesheet.period.split("-")[1]
+    })
+
+    holidays.forEach((holiday) => {
+      const date = holiday.date;
+      const date_values = values_per_dates.get(`${date}`);
+      if (date_values) {
+        date_values.isHoliday = {
+          name: holiday.holiday
+        }
+      }
+    })
+
+
     return { timesheetPerProject, values_per_dates }
   }
 
   async create(createTimesheetExcelDto: CreateTimesheetExcelDto) {
 
-    const timesheetData = await this.prepareTimesheetData(createTimesheetExcelDto.timesheet);
-    console.log(createTimesheetExcelDto);
-    const holidays = await this.holidayService.find({
-      year: createTimesheetExcelDto.year,
-      month: createTimesheetExcelDto.month
-    })
-
+    const { timesheetPerProject, values_per_dates } = await this.prepareTimesheetData(createTimesheetExcelDto.timesheet);
+    console.log(timesheetPerProject, values_per_dates);
 
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('timesheet', { pageSetup: { paperSize: 9, orientation: 'landscape' } })
 
-    //CREATE HEADER
     //create fixed layout
     header.forEach((layout) => {
-      if (layout.row) {
-        const row = sheet.getRow(layout.row.key);
-        Object.keys(layout.row).forEach(key => row[key] = layout.row[key])
-      }
+      this.transformCellFromLayout(layout, sheet);
+    })
 
-      if (layout.column) {
-        const column = sheet.getColumn(layout.column.key)
-        Object.keys(layout.column).forEach(key => column[key] = layout.column[key])
-      }
-
-      const cell = sheet.getCell(layout.origin);
-      cell.style = layout.style
-      cell.value = layout.value
-      if (layout.mergeCells) {
-        sheet.mergeCells(layout.mergeCells)
-      }
+    //create header
+    const layouts = createTimesheetHeader(createTimesheetExcelDto.timesheet);
+    layouts.forEach((layout) => {
+      this.transformCellFromLayout(layout, sheet);
     })
 
     //CREATE DATA
-
+    const datas = createTimesheetData(timesheetPerProject, values_per_dates);
+    datas.forEach((data) => {
+      this.transformCellFromLayout(data, sheet)
+    })
 
     //CREATE FOOTER
-
+    const footer = createTimesheetFooter(timesheetPerProject.keys.length)
+    footer.forEach((layout) => {
+      this.transformCellFromLayout(layout, sheet)
+    })
 
     //CREATE BUFFER
     const excelBuffer = await workbook.xlsx.writeBuffer();
 
     return excelBuffer;
   }
-
-
-
-  private async exceljs_createTimesheetExcel(
-    data,
-    worksheet: ExcelJS.Worksheet,
-  ) {
-
-
-    Object.keys(data).forEach((key) => {
-      const cell = worksheet.getCell(data[key].origin);
-      console.log(data[key]);
-      if (key !== "photo") {
-        cell.value = data[key].value;
-      }
-    });
-
-
-
-    //  add image
-    //     const photo1 = workbook.addImage({
-    //       buffer: photo,
-    //       extension: "png",
-    //     });
-
-    //     worksheet.addImage(photo1, data["photo"].frame);
-
-
-
-    // const biodataBuffer = await workbook.xlsx.writeBuffer();
-
-    // return biodataBuffer;
-  }
-
-
-
 
 }

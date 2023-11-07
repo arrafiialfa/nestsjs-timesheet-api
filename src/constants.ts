@@ -16,4 +16,19 @@ export const EXCEL_COLUMNS = [
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB',
     'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK',
     'AL', 'AM', 'AN'
-] 
+]
+
+export const MONTHS = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    ' July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+]
