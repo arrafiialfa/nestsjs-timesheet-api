@@ -25,7 +25,7 @@ import { TimesheetToExcelModule } from './modules/timesheet-to-excel/timesheet-t
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10
+      limit: 30
     }),
     AuthModule, UsersModule, FilesModule, BcryptModule,
     TimesheetModule, TimesheetDetailModule, ScopeOfWorkModule,

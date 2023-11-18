@@ -38,8 +38,7 @@ export class AuthService {
 
         //if no user with provided username is not found 
         if (!user) {
-            const rlRes = await this.limiterConsecutiveFailsByEmailIP.consume(email_ip);
-            console.log(rlRes);
+            await this.limiterConsecutiveFailsByEmailIP.consume(email_ip);
             this.logger.warn(`User with email ${email} does not exist in the DB`);
             throw new NotFoundException()
         }
