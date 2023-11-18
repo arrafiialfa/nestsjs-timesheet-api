@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { BcryptModule } from 'src/modules/bcrypt/bcrypt.module';
 import { UsersService } from 'src/modules/users/users.service';
+import { User } from 'src/entities/user.entity';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -31,13 +32,13 @@ describe('AuthService', () => {
     userService = module.get(UsersService);
 
     //mock usersService.findOne to return :
-    const mockedResolvedUser = {
+    const mockedResolvedUser: Partial<User> = {
       id: 23,
       name: 'tstname',
       email: 'test3@gmail.com',
-      password: '$2a$10$KkWrvWRrItS7qO8to2uai./zZizI5Wblk2nXWDfERB7Bn2CJxtlpO' //this is 123123
-    }
-    userService.findOne.mockResolvedValue(mockedResolvedUser);
+      password: '$2a$10$KkWrvWRrItS7qO8to2uai./zZizI5Wblk2nXWDfERB7Bn2CJxtlpO',
+    };
+    (userService.findOne as jest.Mock).mockResolvedValue(mockedResolvedUser);
   });
 
   describe('login', () => {
