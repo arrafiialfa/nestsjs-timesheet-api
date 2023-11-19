@@ -16,11 +16,11 @@ export class Timesheet {
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'site_inspector_id' })
-    site_inspector: User | null;
+    site_inspector: User;
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'checker_2_id' })
-    'checker_2': User | null;
+    'checker_2': User;
 
     @Column({ length: 191, enum: ['accepted', 'rejected', 'waiting', 'revision'] })
     status: string;

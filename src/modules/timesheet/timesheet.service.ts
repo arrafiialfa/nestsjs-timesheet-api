@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -7,6 +7,11 @@ import { UsersService } from '../users/users.service';
 import { RoleNames, TimesheetStatus } from 'src/enums';
 import { User } from 'src/entities/user.entity';
 
+export interface TimesheetUserDto {
+  timesheet_user: User
+  site_inspector: User,
+  checker_2: User
+}
 @Injectable()
 export class TimesheetService {
 
@@ -16,16 +21,18 @@ export class TimesheetService {
     private userService: UsersService,
   ) { }
 
-  private checkUserRole(user: User, roleToCheck: string, roleLabel?: string): Array<string> {
-    const errors = [];
+  private checkUserRole(user: User, roleToCheck: string, roleLabel?: string) {
     if (!user) {
-      errors.push(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
-    } else if (!user.role) {
-      errors.push(`${roleLabel ?? roleToCheck}_id provided does not have a role`)
-    } else if (user.role?.name !== roleToCheck) {
-      errors.push(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck}`)
+      throw new NotFoundException(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
     }
-    return errors
+
+    if (!user.role) {
+      throw new UnauthorizedException(`${roleLabel ?? roleToCheck}_id provided does not have a role`)
+    }
+
+    if (user.role?.name !== roleToCheck) {
+      throw new UnauthorizedException(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck}`)
+    }
   }
 
   async create(createTimesheetDto: CreateTimesheetDto, user_id: number) {
@@ -34,29 +41,15 @@ export class TimesheetService {
       site_inspector_id, checker_2_id
     } = createTimesheetDto
 
-
-    //if server threw error immediately client wont be able to know if the next id has an error or not
-    const errMssg = [];
-
-    const user = await this.userService.findOneById(user_id)
-    const site_inspector = await this.userService.findOneById(site_inspector_id)
-    const checker_2 = await this.userService.findOneById(checker_2_id)
-
-    if (!user) {
-      errMssg.push('user is not found in the database.')
+    const timesheet_user = await this.userService.findOneById(user_id);
+    if (!timesheet_user) {
+      throw new NotFoundException(`User ${user_id} does not exist`)
     }
-
-    const site_inspector_errors = this.checkUserRole(site_inspector, RoleNames.site_inspector)
-    const checker_2_errors = this.checkUserRole(checker_2, RoleNames.checker2)
-    errMssg.push(...site_inspector_errors);
-    errMssg.push(...checker_2_errors);
-
-    if (errMssg.length > 0) {
-      throw new Error(`${errMssg.join(', ')}`);
-    }
+    const site_inspector = await this.userService.checkUserRole(site_inspector_id, RoleNames.site_inspector);
+    const checker_2 = await this.userService.checkUserRole(checker_2_id, RoleNames.checker2);
 
     const newTimesheet = this.timesheetRepository.create({
-      user: user,
+      user: timesheet_user,
       site_inspector: site_inspector,
       checker_2: checker_2,
       status: TimesheetStatus.Waiting,
@@ -114,9 +107,7 @@ export class TimesheetService {
 
     for (const role of rolesToCheck) {
       if (role.id) {
-        const user = await this.userService.findOneById(role.id)
-        const errors = this.checkUserRole(user, role.roleToCheck)
-        errMssgs.push(...errors)
+        await this.userService.checkUserRole(role.id, role.roleToCheck);
       }
     }
 

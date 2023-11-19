@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { NewUserDto } from './dto/newUser.dto';
@@ -30,5 +30,32 @@ export class UsersService {
         const newUser = this.userRepository.create({ ...user, password: this.bcrypt.generatePassword(user.password) });
         return this.userRepository.save(newUser);
     }
+
+    /**
+     * check if user has a role
+     * @param user_id the user id to check the role for 
+     * @param roleToCheck role name to check
+     * @param roleLabel optional, label to describe the role. will be used for error messages
+     */
+    async checkUserRole(user_id: number, roleToCheck: string, roleLabel?: string): Promise<User> {
+
+        const user = await this.findOneById(user_id);
+
+        if (!user) {
+            throw new NotFoundException(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
+        }
+
+        if (!user.role) {
+            throw new UnauthorizedException(`${roleLabel ?? roleToCheck}_id provided does not have a role`)
+        }
+
+        if (user.role?.name !== roleToCheck) {
+            throw new UnauthorizedException(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck}`)
+        }
+
+        return user;
+    }
+
+
 
 }

@@ -4,9 +4,15 @@ import { IsNotEmpty, Matches } from "class-validator";
 export class CreateTimesheetDto {
 
     @IsNotEmpty()
+    @ApiProperty({
+        description: 'For testing, site_inspector_id is 1'
+    })
     site_inspector_id: number;
 
     @IsNotEmpty()
+    @ApiProperty({
+        description: 'For testing, checker_2_id is 2'
+    })
     checker_2_id: number;
 
     @IsNotEmpty()

@@ -32,6 +32,7 @@ export class TimesheetController {
     return payload.sub;
   }
 
+  @ApiBearerAuth()
   @Post()
   @HttpCode(HttpStatus.OK)
   async create(@Body() createTimesheetDto: CreateTimesheetDto, @Request() request) {
@@ -39,24 +40,28 @@ export class TimesheetController {
     return this.timesheetService.create(createTimesheetDto, userId);
   }
 
+  @ApiBearerAuth()
   @Get()
   @HttpCode(HttpStatus.OK)
   findAll() {
     return this.timesheetService.findAll();
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     return this.timesheetService.findOne(+id);
   }
 
+  @ApiBearerAuth()
   @Post('/update/:id')
   @HttpCode(HttpStatus.OK)
   update(@Param('id') id: string, @Body() updateTimesheetDto: UpdateTimesheetDto) {
     return this.timesheetService.update(+id, updateTimesheetDto);
   }
 
+  @ApiBearerAuth()
   @Post('/delete/:id')
   @HttpCode(HttpStatus.OK)
   remove(@Param('id') id: string) {
