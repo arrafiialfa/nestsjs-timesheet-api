@@ -2,12 +2,10 @@ import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, Request, Uplo
 import { TimesheetDetailService } from './timesheet-detail.service';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
+import { ApiConsumes, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { TimesheetService } from '../timesheet/timesheet.service';
 
-@Public()
 @ApiTags('timesheet-details')
 @Controller('timesheet-detail')
 export class TimesheetDetailController {
@@ -18,6 +16,7 @@ export class TimesheetDetailController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   async create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto, @UploadedFiles() files, @Request() request) {
     const { checker_2_id, site_inspector_id, period } = createTimesheetDetailDto;
@@ -41,24 +40,28 @@ export class TimesheetDetailController {
     return this.timesheetDetailService.create(createTimesheetDetailDto, userTimesheet, files);
   }
 
+  @ApiBearerAuth()
   @Get()
   @HttpCode(HttpStatus.OK)
   findAll() {
     return this.timesheetDetailService.findAll();
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     return this.timesheetDetailService.findOne(+id);
   }
 
+  @ApiBearerAuth()
   @Post('/update/:id')
   @HttpCode(HttpStatus.OK)
   update(@Param('id') id: string, @Body() updateTimesheetDetailDto: UpdateTimesheetDetailDto) {
     return this.timesheetDetailService.update(+id, updateTimesheetDetailDto);
   }
 
+  @ApiBearerAuth()
   @Post('/delete/:id')
   @HttpCode(HttpStatus.OK)
   remove(@Param('id') id: string) {

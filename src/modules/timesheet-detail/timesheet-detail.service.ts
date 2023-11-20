@@ -3,7 +3,6 @@ import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
 import { Repository } from 'typeorm';
 import { TimesheetDetail } from 'src/entities/timesheet_detail.entity';
-import { TimesheetService } from '../timesheet/timesheet.service';
 import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
 import { ProjectService } from '../project/project.service';
 import { FilesService } from '../files/files.service';
@@ -16,17 +15,20 @@ export class TimesheetDetailService {
   constructor(
     @Inject('TIMESHEET_DETAIL_REPOSITORY')
     private timesheetDetailRepository: Repository<TimesheetDetail>,
-    private timesheetService: TimesheetService,
     private scopeOfWorkService: ScopeOfWorkService,
     private projectService: ProjectService,
     private filesService: FilesService
   ) { }
 
 
-  private calculateValue(clock_in: string, clock_out: string): number {
+  public calculateValue(clock_in: string, clock_out: string): number {
     const format = 'HH:mm:ss';
-    const parsedClockIn = parse(clock_in, format, new Date());
-    const parsedClockOut = parse(clock_out, format, new Date());
+    // Function to enforce 'HH:mm:ss' format if seconds are not provided
+    const enforceFormat = (time: string) => (time.length === 5 ? time + ':00' : time);
+
+    const parsedClockIn = parse(enforceFormat(clock_in), format, new Date());
+    const parsedClockOut = parse(enforceFormat(clock_out), format, new Date());
+
 
     const workHours = parsedClockOut.getTime() - parsedClockIn.getTime();
     const hours = workHours / (60 * 60 * 1000); // Convert milliseconds to hours
