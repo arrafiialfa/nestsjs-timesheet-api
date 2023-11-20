@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
 import { Repository } from 'typeorm';
@@ -6,10 +6,10 @@ import { TimesheetDetail } from 'src/entities/timesheet_detail.entity';
 import { TimesheetService } from '../timesheet/timesheet.service';
 import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
 import { ProjectService } from '../project/project.service';
-import { CreateTimesheetDto } from '../timesheet/dto/create-timesheet.dto';
 import { FilesService } from '../files/files.service';
 import { DEFAULT_WORK_HOURS } from 'src/constants';
 import { parse } from "date-fns"
+import { Timesheet } from 'src/entities/timesheet.entity';
 @Injectable()
 export class TimesheetDetailService {
 
@@ -35,52 +35,33 @@ export class TimesheetDetailService {
   }
 
   private async handleFileUpload(files: Express.Multer.File[]): Promise<string> {
-    if (files.length > 0) {
-      const paths = await this.filesService.saveFiles(files)
-      return paths.join(' | ')
-    }
-    return null;
+    const paths = await this.filesService.saveFiles(files)
+    return paths.join(' | ')
   }
 
-  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, user_id: number, files?: Express.Multer.File[]) {
+  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, userTimesheet: Timesheet, files?: Express.Multer.File[]) {
 
     const { project_id, scope_of_work_id, clock_in, clock_out } = createTimesheetDetailDto
 
-    const errMssg = [];
-    const timesheet = await this.timesheetService.findOneBy({ period: createTimesheetDetailDto.period })
-    console.log(timesheet, "test", createTimesheetDetailDto.period);
     const project = await this.projectService.findOne(project_id);
     const scopeOfWork = await this.scopeOfWorkService.findOne(scope_of_work_id)
 
     if (!project) {
-      errMssg.push('Check your project_id, Project is not found in DB. ')
+      throw new NotFoundException('Check your project_id, Project is not found in DB. ')
     }
     if (!scopeOfWork) {
-      errMssg.push('Check your scope_of_work_id, Scope of Work is not found in DB. ')
+      throw new NotFoundException('Check your scope_of_work_id, Scope of Work is not found in DB. ')
     }
 
-    if (errMssg.length > 0) {
-      throw new Error(errMssg.join(", "))
-    }
-
-    let new_timesheet = null
-    if (!timesheet) {
-      const createTimesheetDto: CreateTimesheetDto = {
-        site_inspector_id: createTimesheetDetailDto.site_inspector_id,
-        checker_2_id: createTimesheetDetailDto.checker_2_id,
-        period: createTimesheetDetailDto.period
-      }
-
-      new_timesheet = await this.timesheetService.create(createTimesheetDto, user_id)
-    }
+    const file_path = files.length > 0 ? await this.handleFileUpload(files) : null;
 
     const newTimesheetDetail = this.timesheetDetailRepository.create(
       {
-        timesheet: timesheet ?? new_timesheet,
+        timesheet: userTimesheet,
         project: project,
         scope_of_work: scopeOfWork,
         value: this.calculateValue(clock_in, clock_out),
-        file_path: await this.handleFileUpload(files),
+        file_path: file_path,
         ...createTimesheetDetailDto
       }
     )

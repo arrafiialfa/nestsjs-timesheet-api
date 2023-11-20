@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -21,21 +21,7 @@ export class TimesheetService {
     private userService: UsersService,
   ) { }
 
-  private checkUserRole(user: User, roleToCheck: string, roleLabel?: string) {
-    if (!user) {
-      throw new NotFoundException(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
-    }
-
-    if (!user.role) {
-      throw new UnauthorizedException(`${roleLabel ?? roleToCheck}_id provided does not have a role`)
-    }
-
-    if (user.role?.name !== roleToCheck) {
-      throw new UnauthorizedException(`${roleLabel ?? roleToCheck}_id provided does not correspond to user with the role ${roleLabel ?? roleToCheck}`)
-    }
-  }
-
-  async create(createTimesheetDto: CreateTimesheetDto, user_id: number) {
+  async create(createTimesheetDto: CreateTimesheetDto, user_id: number): Promise<Timesheet> {
 
     const {
       site_inspector_id, checker_2_id
@@ -118,7 +104,11 @@ export class TimesheetService {
     return this.timesheetRepository.update(id, updateTimesheetDto);
   }
 
-  remove(id: number) {
+  softDelete(id: number) {
     return this.timesheetRepository.softDelete(id);
+  }
+
+  delete(FindOptionsWhere: FindOptionsWhere<Timesheet>) {
+    return this.timesheetRepository.delete(FindOptionsWhere);
   }
 }

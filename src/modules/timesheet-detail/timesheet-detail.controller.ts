@@ -4,31 +4,41 @@ import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
-import { JWT_SECRET } from 'src/constants';
+import { TimesheetService } from '../timesheet/timesheet.service';
 
 @Public()
 @ApiTags('timesheet-details')
 @Controller('timesheet-detail')
 export class TimesheetDetailController {
   constructor(
+    private readonly timesheetService: TimesheetService,
     private readonly timesheetDetailService: TimesheetDetailService,
-    private jwtService: JwtService,
     private authService: AuthService) { }
 
   @Post()
   @HttpCode(HttpStatus.OK)
   @ApiConsumes('multipart/form-data')
   async create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto, @UploadedFiles() files, @Request() request) {
-    const token = this.authService.extractTokenFromHeader(request)
-    const payload = await this.jwtService.verifyAsync(
-      token,
-      {
-        secret: JWT_SECRET,
-      }
-    );
-    return this.timesheetDetailService.create(createTimesheetDetailDto, payload.sub, files);
+    const { checker_2_id, site_inspector_id, period } = createTimesheetDetailDto;
+    const user_id = await this.authService.getUserIdFromJwt(request);
+    let userTimesheet = await this.timesheetService.findOneBy({
+      period: period,
+      user: { id: user_id }
+    })
+
+    if (!userTimesheet) {
+      //create new timesheet if user timesheet for that period is not found
+      userTimesheet = await this.timesheetService.create(
+        {
+          site_inspector_id: site_inspector_id,
+          checker_2_id: checker_2_id,
+          period: period
+        },
+        user_id)
+    }
+
+    return this.timesheetDetailService.create(createTimesheetDetailDto, userTimesheet, files);
   }
 
   @Get()

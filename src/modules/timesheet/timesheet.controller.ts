@@ -65,7 +65,7 @@ export class TimesheetController {
   @Post('/delete/:id')
   @HttpCode(HttpStatus.OK)
   remove(@Param('id') id: string) {
-    return this.timesheetService.remove(+id);
+    return this.timesheetService.delete({ id: +id });
   }
 
   @ApiBearerAuth()

@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, FindOptionsWhere } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { NewUserDto } from './dto/newUser.dto';
 import { BcryptService } from 'src/modules/bcrypt/bcrypt.service';
@@ -31,6 +31,10 @@ export class UsersService {
         return this.userRepository.save(newUser);
     }
 
+    async delete(FindOptionsWhere: FindOptionsWhere<User>): Promise<DeleteResult> {
+        return this.userRepository.delete(FindOptionsWhere)
+    }
+
     /**
      * check if user has a role
      * @param user_id the user id to check the role for 
@@ -39,7 +43,7 @@ export class UsersService {
      */
     async checkUserRole(user_id: number, roleToCheck: string, roleLabel?: string): Promise<User> {
 
-        const user = await this.findOneById(user_id);
+        const user = await this.userRepository.findOneBy({ id: user_id });
 
         if (!user) {
             throw new NotFoundException(`check ${roleLabel ?? roleToCheck}_id provided, ${roleLabel ?? roleToCheck}_id provided is not a user in the database`)
@@ -55,7 +59,5 @@ export class UsersService {
 
         return user;
     }
-
-
 
 }

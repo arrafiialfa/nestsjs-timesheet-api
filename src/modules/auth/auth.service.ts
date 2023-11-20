@@ -5,7 +5,8 @@ import { JwtService } from '@nestjs/jwt'
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Request } from "express"
-import { MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP } from 'src/constants';
+import { MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP, JWT_SECRET } from 'src/constants';
+
 
 @Injectable()
 export class AuthService {
@@ -68,4 +69,16 @@ export class AuthService {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
         return type === 'Bearer' ? token : undefined;
     }
+
+    async getUserIdFromJwt(request: Request): Promise<number> {
+        const token = this.extractTokenFromHeader(request)
+        const payload = await this.jwtService.verifyAsync(
+            token,
+            {
+                secret: JWT_SECRET,
+            }
+        );
+        return payload.sub;
+    }
+
 }

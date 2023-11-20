@@ -8,6 +8,6 @@ import { RateLimiterModule } from 'src/modules/rate-limiter/rate-limiter.module'
 @Module({
   imports: [BcryptModule, DatabaseModule, RateLimiterModule],
   providers: [...userProviders, UsersService],
-  exports: [UsersService, ...userProviders],
+  exports: [UsersService, BcryptModule, RateLimiterModule, ...userProviders],
 })
 export class UsersModule { }

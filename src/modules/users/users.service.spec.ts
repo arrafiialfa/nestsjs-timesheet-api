@@ -1,16 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createMock, DeepMocked } from '@golevelup/ts-jest';
-import { UsersService } from 'src/users/users.service';
-import { ConflictException } from '@nestjs/common/exceptions';
-import { BcryptModule } from 'src/bcrypt/bcrypt.module';
-import { NewUserDto } from './dto/newUser.dto';
+import { DeepMocked, createMock } from '@golevelup/ts-jest';
+import { UsersService } from 'src/modules/users/users.service';
+import { BcryptModule } from 'src/modules/bcrypt/bcrypt.module';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 
 describe('UsersService', () => {
 
-    let usersService: UsersService;
+    let usersService: DeepMocked<UsersService>;
     let userRepository: DeepMocked<Repository<User>>;
 
     beforeEach(async () => {
@@ -19,39 +18,43 @@ describe('UsersService', () => {
             providers: [
                 UsersService,
                 {
-                    provide: Repository<User>,
-                    useValue: createMock<Repository<User>>(),
-                }
+                    provide: 'USER_REPOSITORY',
+                    useValue: createMock<Repository<User>>()
+                },
             ],
         }).compile();
-
-        usersService = module.get<UsersService>(UsersService);
-        userRepository = module.get(Repository<User>);
-
+        usersService = module.get(UsersService);
+        userRepository = module.get('USER_REPOSITORY');
     });
 
+    it('should be defined', () => {
+        expect(usersService).toBeDefined()
+    })
 
-    describe('Store user', () => {
+    describe('check user role', () => {
 
-        it('Should throw conflict error when username already exists in DB', async () => {
+        it('should returns NotFoundException if user_id provided is not found', async () => {
+            userRepository.findOneBy.mockResolvedValue(null);
+            await expect(usersService.checkUserRole(10000, 'admin')).rejects.toThrow(NotFoundException)
+        })
 
-            const newUser: NewUserDto = {
-                name: 'new user test',
-                username: 'halo123',
-                password: '123123'
-            }
-
-            userRepository.findOne.mockResolvedValue({
-                id: 1,
-                name: 'new user test',
-                username: 'halo123',
-                password: '123123'
+        it('should returns UnauthorizedException if user found does not have a role', async () => {
+            (userRepository.findOneBy as jest.Mock).mockResolvedValue({
+                name: 'test',
+                role: null
             })
+            await expect(usersService.checkUserRole(1, 'admin')).rejects.toThrow(UnauthorizedException);
+        })
 
-            await expect(usersService.storeUser(newUser)).rejects.toThrow(ConflictException)
-            // await expect(usersService.storeUser(newUser)).resolves.toBeInstanceOf(User)
+        it('should returns UnauthorizedException if user role found does not match the given role name', async () => {
+            (userRepository.findOneBy as jest.Mock).mockResolvedValue({
+                name: 'test',
+                role: {
+                    name: 'NOT_ADMIN'
+                }
+            })
+            await expect(usersService.checkUserRole(1, 'admin')).rejects.toThrow(UnauthorizedException);
         })
 
     })
-
 });
