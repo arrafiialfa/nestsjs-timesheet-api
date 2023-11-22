@@ -9,9 +9,10 @@ import { ProjectModule } from '../project/project.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
 import { FilesModule } from '../files/files.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule, ProjectModule, JwtModule, AuthModule, FilesModule],
+  imports: [DatabaseModule, TimesheetModule, ScopeOfWorkModule, ProjectModule, JwtModule, AuthModule, FilesModule, UsersModule],
   controllers: [TimesheetDetailController],
   providers: [TimesheetDetailService, ...timesheetDetailProviders,],
   exports: [TimesheetDetailService]

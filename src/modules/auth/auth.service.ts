@@ -40,15 +40,17 @@ export class AuthService {
         //if no user with provided username is not found 
         if (!user) {
             await this.limiterConsecutiveFailsByEmailIP.consume(email_ip);
-            this.logger.warn(`User with email ${email} does not exist in the DB`);
-            throw new NotFoundException()
+            const warningMessage = `User with email ${email} does not exist in the DB`;
+            this.logger.warn(warningMessage);
+            throw new NotFoundException(warningMessage)
         }
 
         //if password provided doesnt match
         if (!this.bcrypt.checkPassword(pass, user.password)) {
             await this.limiterConsecutiveFailsByEmailIP.consume(email_ip);
-            this.logger.error(`User with email: ${email} made an invalid login attempt`)
-            throw new UnauthorizedException();
+            const warningMessage = `User with email: ${email} made an invalid login attempt`
+            this.logger.error(warningMessage)
+            throw new UnauthorizedException(warningMessage);
         }
 
         const payload = { sub: user.id, email: user.email }
