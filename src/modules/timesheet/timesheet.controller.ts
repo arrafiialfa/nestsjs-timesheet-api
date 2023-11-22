@@ -1,15 +1,14 @@
-import { Controller, Get, Post, Body, Param, HttpStatus, HttpCode, Request, Response } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpStatus, HttpCode, Request, Response, NotFoundException } from '@nestjs/common';
 import { TimesheetService } from './timesheet.service';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
-import { JWT_SECRET } from 'src/constants';
 import { CreateExcelDto } from './dto/create-timesheet-to-excel.dto';
 import { TimesheetToExcelService } from '../timesheet-to-excel/timesheet-to-excel.service';
 import { UsersService } from '../users/users.service';
 import { CreateTimesheetExcelDto } from '../timesheet-to-excel/dto/create-timesheet-excel.dto';
+import { RoleNames } from 'src/enums';
 
 @ApiTags('Timesheet')
 @Controller('timesheet')
@@ -18,26 +17,27 @@ export class TimesheetController {
     private readonly timesheetService: TimesheetService,
     private readonly toExcelService: TimesheetToExcelService,
     private authService: AuthService,
-    private jwtService: JwtService,
-    private userService: UsersService) { }
+    private userService: UsersService
+  ) { }
 
-  private async getUserId(@Request() request): Promise<number> {
-    const token = this.authService.extractTokenFromHeader(request)
-    const payload = await this.jwtService.verifyAsync(
-      token,
-      {
-        secret: JWT_SECRET,
-      }
-    );
-    return payload.sub;
-  }
 
   @ApiBearerAuth()
   @Post()
   @HttpCode(HttpStatus.OK)
   async create(@Body() createTimesheetDto: CreateTimesheetDto, @Request() request) {
-    const userId = await this.getUserId(request);
-    return this.timesheetService.create(createTimesheetDto, userId);
+    const {
+      site_inspector_id, checker_2_id
+    } = createTimesheetDto
+
+    const userId = await this.authService.getUserIdFromJwt(request);
+    const timesheet_user = await this.userService.findOneById(userId);
+    if (!timesheet_user) {
+      throw new NotFoundException(`User ${userId} does not exist`)
+    }
+
+    const site_inspector = await this.userService.checkUserRole(site_inspector_id, RoleNames.site_inspector);
+    const checker_2 = await this.userService.checkUserRole(checker_2_id, RoleNames.checker2);
+    return this.timesheetService.create(createTimesheetDto, timesheet_user, checker_2, site_inspector);
   }
 
   @ApiBearerAuth()
@@ -72,7 +72,7 @@ export class TimesheetController {
   @Post('/convert-to-excel')
   @HttpCode(HttpStatus.OK)
   async toExcel(@Body() excelDto: CreateExcelDto, @Request() request, @Response() res) {
-    const userId = await this.getUserId(request);
+    const userId = await this.authService.getUserIdFromJwt(request);
     const user = await this.userService.findOneById(userId);
     const userTimesheet = await this.timesheetService.findOneBy({
       period: excelDto.period,

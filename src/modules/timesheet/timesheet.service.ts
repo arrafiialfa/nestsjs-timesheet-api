@@ -21,7 +21,7 @@ export class TimesheetService {
     private userService: UsersService,
   ) { }
 
-  async create(createTimesheetDto: CreateTimesheetDto, user_id: number): Promise<Timesheet> {
+  async createTimesheet(createTimesheetDto: CreateTimesheetDto, user_id: number): Promise<Timesheet> {
 
     const {
       site_inspector_id, checker_2_id
@@ -43,6 +43,18 @@ export class TimesheetService {
     });
     return this.timesheetRepository.save(newTimesheet)
   }
+
+  async create(createTimesheetDto: CreateTimesheetDto, timesheetUser: User, siteInspector: User, checker_2: User): Promise<Timesheet> {
+    const newTimesheet = this.timesheetRepository.create({
+      user: timesheetUser,
+      site_inspector: siteInspector,
+      checker_2: checker_2,
+      status: TimesheetStatus.Waiting,
+      ...createTimesheetDto
+    })
+    return this.timesheetRepository.save(newTimesheet)
+  }
+
 
   findAll(): Promise<Timesheet[]> {
     return this.timesheetRepository.find();
@@ -108,7 +120,7 @@ export class TimesheetService {
     return this.timesheetRepository.softDelete(id);
   }
 
-  delete(FindOptionsWhere: FindOptionsWhere<Timesheet>) {
-    return this.timesheetRepository.delete(FindOptionsWhere);
+  delete(findOptionsWhere: FindOptionsWhere<Timesheet>) {
+    return this.timesheetRepository.delete(findOptionsWhere);
   }
 }
