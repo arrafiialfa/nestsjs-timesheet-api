@@ -78,7 +78,6 @@ export class TimesheetController {
       period: excelDto.period,
       user: { id: user.id }
     })
-
     if (!userTimesheet) {
       throw new Error(`User [${user.name}]'s Timesheet with period [${excelDto.period}] not found`)
     }

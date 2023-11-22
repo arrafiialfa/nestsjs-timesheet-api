@@ -137,8 +137,6 @@ export class TimesheetToExcelService {
   async create(createTimesheetExcelDto: CreateTimesheetExcelDto) {
 
     const { timesheetPerProject, values_per_dates } = await this.prepareTimesheetData(createTimesheetExcelDto.timesheet);
-    console.log(timesheetPerProject, values_per_dates);
-
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('timesheet', { pageSetup: { paperSize: 9, orientation: 'landscape' } })

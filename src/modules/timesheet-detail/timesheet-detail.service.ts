@@ -1,22 +1,20 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
 import { Repository } from 'typeorm';
 import { TimesheetDetail } from 'src/entities/timesheet_detail.entity';
-import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
-import { ProjectService } from '../project/project.service';
 import { FilesService } from '../files/files.service';
 import { DEFAULT_WORK_HOURS } from 'src/constants';
 import { parse } from "date-fns"
 import { Timesheet } from 'src/entities/timesheet.entity';
+import { Project } from 'src/entities/project.entity';
+import { ScopeOfWork } from 'src/entities/scope_of_work.entity';
 @Injectable()
 export class TimesheetDetailService {
 
   constructor(
     @Inject('TIMESHEET_DETAIL_REPOSITORY')
     private timesheetDetailRepository: Repository<TimesheetDetail>,
-    private scopeOfWorkService: ScopeOfWorkService,
-    private projectService: ProjectService,
     private filesService: FilesService
   ) { }
 
@@ -41,19 +39,9 @@ export class TimesheetDetailService {
     return paths.join(' | ')
   }
 
-  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, userTimesheet: Timesheet, files?: Express.Multer.File[]) {
+  async create(createTimesheetDetailDto: CreateTimesheetDetailDto, userTimesheet: Timesheet, project: Project, scopeOfWork: ScopeOfWork, files?: Express.Multer.File[]) {
 
-    const { project_id, scope_of_work_id, clock_in, clock_out } = createTimesheetDetailDto
-
-    const project = await this.projectService.findOne(project_id);
-    const scopeOfWork = await this.scopeOfWorkService.findOne(scope_of_work_id)
-
-    if (!project) {
-      throw new NotFoundException('Check your project_id, Project is not found in DB. ')
-    }
-    if (!scopeOfWork) {
-      throw new NotFoundException('Check your scope_of_work_id, Scope of Work is not found in DB. ')
-    }
+    const { clock_in, clock_out } = createTimesheetDetailDto
 
     const file_path = files.length > 0 ? await this.handleFileUpload(files) : null;
 

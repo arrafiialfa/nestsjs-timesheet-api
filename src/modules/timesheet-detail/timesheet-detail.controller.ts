@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, Request, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpCode, HttpStatus, Request, UploadedFiles, NotFoundException } from '@nestjs/common';
 import { TimesheetDetailService } from './timesheet-detail.service';
 import { CreateTimesheetDetailDto } from './dto/create-timesheet-detail.dto';
 import { UpdateTimesheetDetailDto } from './dto/update-timesheet-detail.dto';
 import { ApiConsumes, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { TimesheetService } from '../timesheet/timesheet.service';
+import { UsersService } from '../users/users.service';
+import { RoleNames } from 'src/enums';
+import { ProjectService } from '../project/project.service';
+import { ScopeOfWorkService } from '../scope-of-work/scope-of-work.service';
 
 @ApiTags('timesheet-details')
 @Controller('timesheet-detail')
@@ -12,32 +16,46 @@ export class TimesheetDetailController {
   constructor(
     private readonly timesheetService: TimesheetService,
     private readonly timesheetDetailService: TimesheetDetailService,
-    private authService: AuthService) { }
+    private readonly userService: UsersService,
+    private readonly projectService: ProjectService,
+    private readonly scopeOfWorkService: ScopeOfWorkService,
+    private authService: AuthService
+  ) { }
 
   @Post()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   async create(@Body() createTimesheetDetailDto: CreateTimesheetDetailDto, @UploadedFiles() files, @Request() request) {
-    const { checker_2_id, site_inspector_id, period } = createTimesheetDetailDto;
+    const { checker_2_id, site_inspector_id, project_id, scope_of_work_id, period } = createTimesheetDetailDto;
     const user_id = await this.authService.getUserIdFromJwt(request);
-    let userTimesheet = await this.timesheetService.findOneBy({
+    const user = await this.userService.findOneById(user_id);
+
+    let usersTimesheet = await this.timesheetService.findOneBy({
       period: period,
-      user: { id: user_id }
+      user: user
     })
 
-    if (!userTimesheet) {
-      //create new timesheet if user timesheet for that period is not found
-      userTimesheet = await this.timesheetService.create(
-        {
-          site_inspector_id: site_inspector_id,
-          checker_2_id: checker_2_id,
-          period: period
-        },
-        user_id)
+    const site_inspector = await this.userService.checkUserRole(site_inspector_id, RoleNames.site_inspector);
+    const checker_2 = await this.userService.checkUserRole(checker_2_id, RoleNames.checker2)
+
+    //create new timesheet if user's timesheet for that period is not found
+    if (!usersTimesheet) {
+      usersTimesheet = await this.timesheetService.create(
+        { site_inspector_id, checker_2_id, period }, user, site_inspector, checker_2
+      )
     }
 
-    return this.timesheetDetailService.create(createTimesheetDetailDto, userTimesheet, files);
+    const project = await this.projectService.findOne(project_id)
+    if (!project) {
+      throw new NotFoundException('Check your project_id, Project is not found in DB. ')
+    }
+    const scopeOfWork = await this.scopeOfWorkService.findOne(scope_of_work_id)
+    if (!scopeOfWork) {
+      throw new NotFoundException('Check your scope_of_work_id, Scope of Work is not found in DB. ')
+    }
+
+    return this.timesheetDetailService.create(createTimesheetDetailDto, usersTimesheet, project, scopeOfWork, files);
   }
 
   @ApiBearerAuth()
