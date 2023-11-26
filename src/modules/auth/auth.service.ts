@@ -30,6 +30,7 @@ export class AuthService {
         const user = await this.usersService.findOne(email);
         const email_ip = `${email}:${userip}`;
         const rlEmail = await this.limiterConsecutiveFailsByEmailIP.get(email_ip);
+        const warningMessage = `User with email: ${email} made an invalid login attempt`
 
 
         if (rlEmail?.consumedPoints >= MAX_CONSECUTIVE_FAIL_BY_EMAIL_IP) {
@@ -37,25 +38,25 @@ export class AuthService {
             throw new HttpException(`Too Many Failed Attempts, retry after ${retrySecs} seconds`, HttpStatus.TOO_MANY_REQUESTS);
         }
 
-        //if no user with provided username is not found 
+        //if no user is found 
         if (!user) {
             await this.limiterConsecutiveFailsByEmailIP.consume(email_ip);
-            const warningMessage = `User with email ${email} does not exist in the DB`;
-            this.logger.warn(warningMessage);
+            const userDoesNotExistsMessage = `User with email ${email} does not exist in the DB`;
+            this.logger.warn(userDoesNotExistsMessage);
+            //dont tell user email isnt found
             throw new NotFoundException(warningMessage)
         }
 
         //if password provided doesnt match
         if (!this.bcrypt.checkPassword(pass, user.password)) {
             await this.limiterConsecutiveFailsByEmailIP.consume(email_ip);
-            const warningMessage = `User with email: ${email} made an invalid login attempt`
             this.logger.error(warningMessage)
             throw new UnauthorizedException(warningMessage);
         }
 
         const payload = { sub: user.id, email: user.email }
 
-        this.logger.log(`Successfully logged in user with email: ${email}`)
+        this.logger.log(`Successfully logged in user with email: ${email} from IP [${userip}]`)
 
         //remove counters after successful login
         await this.limiterConsecutiveFailsByEmailIP.delete(email_ip);

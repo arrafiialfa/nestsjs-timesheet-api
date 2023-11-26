@@ -1,10 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateTimesheetDto } from './dto/create-timesheet.dto';
 import { UpdateTimesheetDto } from './dto/update-timesheet.dto';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Timesheet } from 'src/entities/timesheet.entity';
-import { UsersService } from '../users/users.service';
-import { RoleNames, TimesheetStatus } from 'src/enums';
+import { TimesheetStatus } from 'src/enums';
 import { User } from 'src/entities/user.entity';
 
 export interface TimesheetUserDto {
@@ -18,31 +17,7 @@ export class TimesheetService {
   constructor(
     @Inject('TIMESHEET_REPOSITORY')
     private timesheetRepository: Repository<Timesheet>,
-    private userService: UsersService,
   ) { }
-
-  async createTimesheet(createTimesheetDto: CreateTimesheetDto, user_id: number): Promise<Timesheet> {
-
-    const {
-      site_inspector_id, checker_2_id
-    } = createTimesheetDto
-
-    const timesheet_user = await this.userService.findOneById(user_id);
-    if (!timesheet_user) {
-      throw new NotFoundException(`User ${user_id} does not exist`)
-    }
-    const site_inspector = await this.userService.checkUserRole(site_inspector_id, RoleNames.site_inspector);
-    const checker_2 = await this.userService.checkUserRole(checker_2_id, RoleNames.checker2);
-
-    const newTimesheet = this.timesheetRepository.create({
-      user: timesheet_user,
-      site_inspector: site_inspector,
-      checker_2: checker_2,
-      status: TimesheetStatus.Waiting,
-      ...createTimesheetDto
-    });
-    return this.timesheetRepository.save(newTimesheet)
-  }
 
   async create(createTimesheetDto: CreateTimesheetDto, timesheetUser: User, siteInspector: User, checker_2: User): Promise<Timesheet> {
     const newTimesheet = this.timesheetRepository.create({
@@ -89,30 +64,6 @@ export class TimesheetService {
   }
 
   async update(id: number, updateTimesheetDto: UpdateTimesheetDto) {
-
-    const rolesToCheck = [
-      {
-        id: updateTimesheetDto.site_inspector_id,
-        roleToCheck: RoleNames.site_inspector
-      },
-      {
-        id: updateTimesheetDto.checker_2_id,
-        roleToCheck: RoleNames.checker2
-      }
-    ]
-
-    const errMssgs = []
-
-    for (const role of rolesToCheck) {
-      if (role.id) {
-        await this.userService.checkUserRole(role.id, role.roleToCheck);
-      }
-    }
-
-    if (errMssgs.length > 0) {
-      throw new Error(`${errMssgs.join(', ')}`)
-    }
-
     return this.timesheetRepository.update(id, updateTimesheetDto);
   }
 

@@ -57,7 +57,24 @@ export class TimesheetController {
   @ApiBearerAuth()
   @Post('/update/:id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateTimesheetDto: UpdateTimesheetDto) {
+  async update(@Param('id') id: string, @Body() updateTimesheetDto: UpdateTimesheetDto) {
+    const rolesToCheck = [
+      {
+        id: updateTimesheetDto.site_inspector_id,
+        roleToCheck: RoleNames.site_inspector
+      },
+      {
+        id: updateTimesheetDto.checker_2_id,
+        roleToCheck: RoleNames.checker2
+      }
+    ]
+
+    for (const role of rolesToCheck) {
+      if (role.id) {
+        await this.userService.checkUserRole(role.id, role.roleToCheck);
+      }
+    }
+
     return this.timesheetService.update(+id, updateTimesheetDto);
   }
 
